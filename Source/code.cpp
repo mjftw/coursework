@@ -1,4 +1,6 @@
-#include <stdio>
+#include <cstdio>
+
+using namespace std;
 
 int main()
 {
