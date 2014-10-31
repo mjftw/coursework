@@ -6,65 +6,163 @@ using namespace cv;
 
 void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement better
 {
-    Mat skel(src.size(), CV_8UC1, Scalar(BLACK));
-    Mat temp(src.size(), CV_8UC1);
-    Mat element = getStructuringElement(MORPH_CROSS, cv::Size(3, 3));
-    bool done;
+    /*  Medial Axis Transformation skeletonisation method, taken from Digital Image Processing book, pg650-653
+        Algorithm steps:
+        For each pixel:
+            1. test pixels neighbours
+            p8 p1 p2  |
+            p7 p0 p3  | +y
+            p6 p5 p4  \/
+            ---------->
+                +x
 
+            2. Count Np0, number of non-zero neighbours of p0
+            3. Count Tp0, number of 0-1 transitions in sequence p2, p3 .... p7, p8
+
+            4. Check first conditions, and mark for deletion any point that meets all conditions
+                cA:     2 <= Np0 <= 6
+                cB:     Tp1 = 1
+                cC:     p1 . p3 . p5 = 0
+                cD:     p3 . p5 . p7 = 0
+        5. Delete any points marked for deletion
+
+        For each remaining pixel:
+            6. test pixels neighbours
+            p8 p1 p2
+            p7 p0 p3
+            p6 p5 p4
+
+            7. Check second conditions, and mark for deletion any point that meets all conditions
+                cA:     2 <= Np0 <= 6
+                cB:     Tp1 = 1
+                cC_:    p1 . p3 . p7 = 0
+                cD_:    p1 . p5 . p7 = 0
+        8. Delete any points marked for deletion
+
+        repeat until no points are deleted in an iteration
+    */
+
+    Mat skel = src.clone(); //Src MUST be a binary image
+    Mat to_delete(src.size(), CV_8UC1, Scalar(WHITE)); //matrix or points to be deleted
+
+    bool p[9];  // flags showing if 8-neighbour points of p[0] are 0 or 1
+    bool cA, cB, cC, cD, cC_, cD_; //flags showing if conditions are met
+    int Tp0, Np0;
+    bool points_deleted; //flag showing whether points were deleted this iteration
+    int npd = 0;
     do
     {
-        morphologyEx(src, temp, cv::MORPH_OPEN, element);
-        bitwise_not(temp, temp);
-        bitwise_and(src, temp, temp);
-        bitwise_or(skel, temp, skel);
-        erode(src, src, element);
+        points_deleted = false;
 
-        double max;
-        minMaxLoc(src, 0, &max);
-        done = (max == 0);
-    }while (!done);
+        //cannot test edge points, hence the -2
+        for(int i=1; i<(src.rows-2); i++)    //x values
+            for(int j=1; j<(src.cols-2); j++) //y values
+            {
+                if(src.at<uchar>(i,j) == WHITE)
+                {
+                    Np0 = 0;
+                    Tp0 = 0;
+
+                    p[0] = skel.at<uchar>(i  , j  );    //*TODO* Try switching i & j
+                    p[1] = skel.at<uchar>(i-1, j  );
+                    p[2] = skel.at<uchar>(i-1, j+1);
+                    p[3] = skel.at<uchar>(i  , j+1);
+                    p[4] = skel.at<uchar>(i+1, j+1);
+                    p[5] = skel.at<uchar>(i+1, j  );
+                    p[6] = skel.at<uchar>(i+1, j-1);
+                    p[7] = skel.at<uchar>(i  , j-1);
+                    p[8] = skel.at<uchar>(i-1, j-1);
+
+                    for(int k=1; k<9; k++)
+                    {
+                        if(p[k])
+                            Np0++;
+                        if((k!=1) && (p[k] == 1) && (p[k-1] == 0))
+                            Tp0++;
+                    }
+
+                    cA = ((2 <= Np0) && (Np0 <= 6));
+                    cB = (Tp0 == 1);
+                    cC = ((p[1] & p[3] & p[5]) == 0);
+                    cD = ((p[3] & p[5] & p[7]) == 0);
+
+                    if(cA & cB & cC & cD)
+                    {
+                        to_delete.at<uchar>(i,j) = BLACK;
+                        points_deleted = true;
+                    }
+                }
+            }
+
+        bitwise_and(skel, to_delete, skel);
+
+        for(int i=1; i<(src.rows-2); i++)    //y values
+            for(int j=1; j<(src.cols-2); j++) //x values
+            {
+                if(src.at<uchar>(i,j) == WHITE)
+                {
+                    Np0 = 0;
+                    Tp0 = 0;
+
+                    p[0] = skel.at<uchar>(i  , j  );
+                    p[1] = skel.at<uchar>(i-1, j  );
+                    p[2] = skel.at<uchar>(i-1, j+1);
+                    p[3] = skel.at<uchar>(i  , j+1);
+                    p[4] = skel.at<uchar>(i+1, j+1);
+                    p[5] = skel.at<uchar>(i+1, j  );
+                    p[6] = skel.at<uchar>(i+1, j-1);
+                    p[7] = skel.at<uchar>(i  , j-1);
+                    p[8] = skel.at<uchar>(i-1, j-1);
+
+                    for(int k=1; k<9; k++)
+                    {
+                        if(p[k])
+                            Np0++;
+                        if((k!=1) && (p[k] == 1) && (p[k-1] == 0))
+                            Tp0++;
+                    }
+
+                    cA = ((2 <= Np0) && (Np0 <= 6));
+                    cB = (Tp0 == 1);
+                    cC_ = ((p[1] & p[3] & p[7]) == 0);
+                    cD_ = ((p[1] & p[5] & p[7]) == 0);
+
+                    if(cA & cB & cC_ & cD_)
+                    {
+                        to_delete.at<uchar>(i,j) = BLACK;
+                        points_deleted = true;
+                    }
+                }
+            }
+
+        bitwise_and(skel, to_delete, skel);
+        namedWindow("skel", WINDOW_NORMAL);
+        imshow("skel", skel);
+        waitKey(0);
+    }while(points_deleted);
 
     dst = skel.clone();
     return;
-}
 
-void divideIntoSubimgs(Mat& src, vector<Mat>* op, int n, int m) //From summer work, written by Merlin Webster
-{
-    op->clear();
 
-    int w = src.cols / n;
-    int h = src.rows / m;
-    Mat temp;
+    /* Using morphological method
+    Mat skel(src.size(), CV_8UC1, Scalar(BLACK));
+    Mat src_opn(src.size(), CV_8UC1);
+    Mat element = getStructuringElement(MORPH_CROSS, cv::Size(3, 3));
+    double maximum = BLACK;
 
-    for(int i=0; i<m; i++)
-        for(int j=0; j<n; j++)
-        {
-            temp = src(Rect(j*w, i*h, w, h));
-            op->push_back(src(Rect(j*w, i*h, w, h)));
-        }
-}
+    do
+    {
+        morphologyEx(src, src_opn, cv::MORPH_OPEN, element);
 
-void combineSubimgs(vector<Mat>* src, Mat& op, int n, int m) //From summer work, written by Merlin Webster
-{
-    if(src->empty())
-        return;
+        for(int i=0; i<src.rows; i++)
+            for(int j=0; j<src.cols+1500; j++)
+                skel.at<uchar>(i,j) = (skel.at<uchar>(i,j) || (src.at<uchar>(i,j) && !src_opn.at<uchar>(i,j)))? WHITE:BLACK;
+        erode(src, src, element);       //src(erode)
 
-    int w = src->at(0).cols;
-    int h = src->at(0).rows;
+        minMaxLoc(src, BLACK, &maximum);
+    }while (maximum != BLACK);
 
-    op = Mat(w*m, h*n, CV_8UC1, Scalar::all(BLACK));
-    for(int i=0; i<m; i++)
-        for(int j=0; j<n; j++)
-            op(Rect(j*w, i*h, h, w)) += src->at(i*n + j);
-
-    return;
-}
-
-void optimalThreshSubimgs(Mat& src, Mat& dst, int min_fg_bg_diff, int n, int m) //From summer work, written by Merlin Webster
-{
-    vector<Mat> subimgs;
-
-    divideIntoSubimgs(src, &subimgs, n, m);
-    combineSubimgs(&subimgs, dst, n, m);
-    return;
+    dst = skel.clone();
+    return;*/
 }
