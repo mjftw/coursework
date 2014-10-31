@@ -16,13 +16,14 @@ int main()
     Mat src, dst;
 
     src = imread(src_path, CV_LOAD_IMAGE_GRAYSCALE);
-    float sf = 0.5;    //scale factor
+    float sf = 0.25;    //scale factor
     resize(src, src, Size(0,0), sf, sf);
 
     namedWindow("src", WINDOW_NORMAL);
     imshow("src", src);
 
-    findSkeleton(src, dst);
+    findConnectedSkeleton(src, dst);
+    //findSkeleton(src, dst);
 
     namedWindow("skele", WINDOW_NORMAL);
     imshow("skele", dst);

@@ -6,6 +6,31 @@ using namespace cv;
 
 void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement better
 {
+    // Using morphological method
+    Mat skel(src.size(), CV_8UC1, Scalar(BLACK));
+    Mat temp(src.size(), CV_8UC1);
+    Mat element = getStructuringElement(MORPH_CROSS, cv::Size(3, 3));
+    double maximum = BLACK;
+
+    do
+    {
+        morphologyEx(src, temp, cv::MORPH_OPEN, element);
+        bitwise_not(temp, temp);
+        bitwise_and(temp, src, temp);
+        bitwise_or(temp, skel, skel);
+        erode(src, src, element);       //src(erode)
+
+        minMaxLoc(src, BLACK, &maximum);
+    }while (maximum != BLACK);
+
+    morphologyEx(src, src, cv::MORPH_CLOSE, element);
+
+    dst = skel.clone();
+    return;
+}
+
+void findConnectedSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement better
+{
     /*  Medial Axis Transformation skeletonisation method, taken from Digital Image Processing book, pg650-653
         Algorithm steps:
         For each pixel:
@@ -43,16 +68,16 @@ void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement be
     */
 
     Mat skel = src.clone(); //Src MUST be a binary image
+    Mat skel_prev(src.size(), CV_8UC1, Scalar(BLACK)), skel_diff(src.size(), CV_8UC1, Scalar(BLACK));
     Mat to_delete(src.size(), CV_8UC1, Scalar(WHITE)); //matrix or points to be deleted
+    double maximum = BLACK;
 
     bool p[9];  // flags showing if 8-neighbour points of p[0] are 0 or 1
     bool cA, cB, cC, cD, cC_, cD_; //flags showing if conditions are met
     int Tp0, Np0;
-    bool points_deleted; //flag showing whether points were deleted this iteration
-    int npd = 0;
     do
     {
-        points_deleted = false;
+        skel_prev = skel.clone();
 
         //cannot test edge points, hence the -2
         for(int i=1; i<(src.rows-2); i++)    //x values
@@ -87,10 +112,7 @@ void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement be
                     cD = ((p[3] & p[5] & p[7]) == 0);
 
                     if(cA & cB & cC & cD)
-                    {
                         to_delete.at<uchar>(i,j) = BLACK;
-                        points_deleted = true;
-                    }
                 }
             }
 
@@ -128,41 +150,16 @@ void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement be
                     cD_ = ((p[1] & p[5] & p[7]) == 0);
 
                     if(cA & cB & cC_ & cD_)
-                    {
                         to_delete.at<uchar>(i,j) = BLACK;
-                        points_deleted = true;
-                    }
                 }
             }
 
         bitwise_and(skel, to_delete, skel);
-        namedWindow("skel", WINDOW_NORMAL);
-        imshow("skel", skel);
-        waitKey(0);
-    }while(points_deleted);
+
+        absdiff(skel, skel_prev, skel_diff);
+        minMaxLoc(skel_diff, BLACK, &maximum);
+    }while(maximum != BLACK);
 
     dst = skel.clone();
     return;
-
-
-    /* Using morphological method
-    Mat skel(src.size(), CV_8UC1, Scalar(BLACK));
-    Mat src_opn(src.size(), CV_8UC1);
-    Mat element = getStructuringElement(MORPH_CROSS, cv::Size(3, 3));
-    double maximum = BLACK;
-
-    do
-    {
-        morphologyEx(src, src_opn, cv::MORPH_OPEN, element);
-
-        for(int i=0; i<src.rows; i++)
-            for(int j=0; j<src.cols+1500; j++)
-                skel.at<uchar>(i,j) = (skel.at<uchar>(i,j) || (src.at<uchar>(i,j) && !src_opn.at<uchar>(i,j)))? WHITE:BLACK;
-        erode(src, src, element);       //src(erode)
-
-        minMaxLoc(src, BLACK, &maximum);
-    }while (maximum != BLACK);
-
-    dst = skel.clone();
-    return;*/
 }
