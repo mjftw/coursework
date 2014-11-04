@@ -3,9 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include "libs.h"
-#include "C:/opencv/build/include/opencv2/opencv.hpp"
-#include "C:/opencv/build/include/opencv2/opencv_modules.hpp"
-#include <cmath>
+#include "data_labeling.h"
 
 using namespace std;
 using namespace cv;
@@ -17,6 +15,12 @@ int main()
     Mat src, dst;
 
     src = imread(src_path, CV_LOAD_IMAGE_GRAYSCALE);
+    if(src.empty())
+    {
+        cout << "Error loading source image" << endl;
+        return -1;
+    }
+
     float sf = 0.25;    //scale factor
     resize(src, src, Size(0,0), sf, sf);
 
@@ -30,11 +34,14 @@ int main()
     find_skeleton_connected(src, dst);
     //find_skeleton(src, dst);
 
-    reduce_points(dst, dst);
 
-    namedWindow("skele", WINDOW_NORMAL);
-    imshow("skele", dst);
-    imwrite("test_op.bmp", dst);
+    float epsilon = 30, sizeTol = 0.3;
+    reduce_points(dst, dst, epsilon, sizeTol);
+
+    get_desc_points(src);
+
+    namedWindow("Final", WINDOW_NORMAL);
+    imshow("Final", dst);
 
     waitKey(0);
     return 0;
