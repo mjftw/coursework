@@ -4,6 +4,12 @@ using namespace cv;
 #define WHITE 255
 #define BLACK 0
 
+void edge_detect(Mat& src, Mat& dst);
+void findSkeleton(Mat& src, Mat& dst);
+void findConnectedSkeleton(Mat& src, Mat& dst);
+void edge_detect(Mat& src, Mat& dst);
+
+
 void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement better
 {
     // Using morphological method
@@ -70,6 +76,7 @@ void findConnectedSkeleton(Mat& src, Mat& dst) //From summer work, should re-imp
     Mat skel = src.clone(); //Src MUST be a binary image
     Mat skel_prev(src.size(), CV_8UC1, Scalar(BLACK)), skel_diff(src.size(), CV_8UC1, Scalar(BLACK));
     Mat to_delete(src.size(), CV_8UC1, Scalar(WHITE)); //matrix or points to be deleted
+    Mat edge(src.size(), CV_8UC1, Scalar(BLACK));
     double maximum = BLACK;
 
     bool p[9];  // flags showing if 8-neighbour points of p[0] are 0 or 1
@@ -78,50 +85,12 @@ void findConnectedSkeleton(Mat& src, Mat& dst) //From summer work, should re-imp
     do
     {
         skel_prev = skel.clone();
-
+        edge_detect(skel, edge);
         //cannot test edge points, hence the -2
         for(int i=1; i<(src.rows-2); i++)    //x values
             for(int j=1; j<(src.cols-2); j++) //y values
             {
-                if(src.at<uchar>(i,j) == WHITE)
-                {
-                    Np0 = 0;
-                    Tp0 = 0;
-
-                    p[0] = skel.at<uchar>(i  , j  );    //*TODO* Try switching i & j
-                    p[1] = skel.at<uchar>(i-1, j  );
-                    p[2] = skel.at<uchar>(i-1, j+1);
-                    p[3] = skel.at<uchar>(i  , j+1);
-                    p[4] = skel.at<uchar>(i+1, j+1);
-                    p[5] = skel.at<uchar>(i+1, j  );
-                    p[6] = skel.at<uchar>(i+1, j-1);
-                    p[7] = skel.at<uchar>(i  , j-1);
-                    p[8] = skel.at<uchar>(i-1, j-1);
-
-                    for(int k=1; k<9; k++)
-                    {
-                        if(p[k])
-                            Np0++;
-                        if((k!=1) && (p[k] == 1) && (p[k-1] == 0))
-                            Tp0++;
-                    }
-
-                    cA = ((2 <= Np0) && (Np0 <= 6));
-                    cB = (Tp0 == 1);
-                    cC = ((p[1] & p[3] & p[5]) == 0);
-                    cD = ((p[3] & p[5] & p[7]) == 0);
-
-                    if(cA & cB & cC & cD)
-                        to_delete.at<uchar>(i,j) = BLACK;
-                }
-            }
-
-        bitwise_and(skel, to_delete, skel);
-
-        for(int i=1; i<(src.rows-2); i++)    //y values
-            for(int j=1; j<(src.cols-2); j++) //x values
-            {
-                if(src.at<uchar>(i,j) == WHITE)
+                if(edge.at<uchar>(i,j) == WHITE)
                 {
                     Np0 = 0;
                     Tp0 = 0;
@@ -143,6 +112,49 @@ void findConnectedSkeleton(Mat& src, Mat& dst) //From summer work, should re-imp
                         if((k!=1) && (p[k] == 1) && (p[k-1] == 0))
                             Tp0++;
                     }
+                    if((p[1] == 1) && (p[8] == 0))
+                        Tp0++;
+
+                    cA = ((2 <= Np0) && (Np0 <= 6));
+                    cB = (Tp0 == 1);
+                    cC = ((p[1] & p[3] & p[5]) == 0);
+                    cD = ((p[3] & p[5] & p[7]) == 0);
+
+                    if(cA & cB & cC & cD)
+                        to_delete.at<uchar>(i,j) = BLACK;
+                }
+            }
+
+        bitwise_and(skel, to_delete, skel);
+        edge_detect(skel, edge);
+
+        for(int i=1; i<(src.rows-2); i++)    //y values
+            for(int j=1; j<(src.cols-2); j++) //x values
+            {
+                if(edge.at<uchar>(i,j) == WHITE)
+                {
+                    Np0 = 0;
+                    Tp0 = 0;
+
+                    p[0] = skel.at<uchar>(i  , j  );
+                    p[1] = skel.at<uchar>(i-1, j  );
+                    p[2] = skel.at<uchar>(i-1, j+1);
+                    p[3] = skel.at<uchar>(i  , j+1);
+                    p[4] = skel.at<uchar>(i+1, j+1);
+                    p[5] = skel.at<uchar>(i+1, j  );
+                    p[6] = skel.at<uchar>(i+1, j-1);
+                    p[7] = skel.at<uchar>(i  , j-1);
+                    p[8] = skel.at<uchar>(i-1, j-1);
+
+                    for(int k=1; k<9; k++)
+                    {
+                        if(p[k])
+                            Np0++;
+                        if((k!=1) && (p[k] == 1) && (p[k-1] == 0))
+                            Tp0++;
+                    }
+                    if((p[1] == 1) && (p[8] == 0))
+                        Tp0++;
 
                     cA = ((2 <= Np0) && (Np0 <= 6));
                     cB = (Tp0 == 1);
@@ -161,5 +173,15 @@ void findConnectedSkeleton(Mat& src, Mat& dst) //From summer work, should re-imp
     }while(maximum != BLACK);
 
     dst = skel.clone();
+    return;
+}
+
+void edge_detect(Mat& src, Mat& dst)
+{
+    Mat edge(src.size(), CV_8UC1, Scalar(BLACK));
+    Mat kernel = (Mat_<char>(3,3)  << -1, -1, -1,
+                                      -1,  8, -1,
+                                      -1, -1, -1); //laplacian edge detection
+    filter2D(src, dst, -1, kernel);
     return;
 }
