@@ -5,6 +5,7 @@
 #include "libs.h"
 #include "C:/opencv/build/include/opencv2/opencv.hpp"
 #include "C:/opencv/build/include/opencv2/opencv_modules.hpp"
+#include <cmath>
 
 using namespace std;
 using namespace cv;
@@ -26,11 +27,10 @@ int main()
     namedWindow("src", WINDOW_NORMAL);
     imshow("src", src);
 
-    edge_detect(src, dst);
+    find_skeleton_connected(src, dst);
+    //find_skeleton(src, dst);
 
-    findConnectedSkeleton(src, dst);
-    //findSkeleton(src, dst);
-
+    reduce_points(dst, dst);
 
     namedWindow("skele", WINDOW_NORMAL);
     imshow("skele", dst);

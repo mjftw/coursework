@@ -5,12 +5,13 @@ using namespace cv;
 #define BLACK 0
 
 void edge_detect(Mat& src, Mat& dst);
-void findSkeleton(Mat& src, Mat& dst);
-void findConnectedSkeleton(Mat& src, Mat& dst);
+void find_skeleton(Mat& src, Mat& dst);
+void find_skeleton_connected(Mat& src, Mat& dst);
 void edge_detect(Mat& src, Mat& dst);
+void reduce_points(Mat& src, Mat dst);
+vector<Point> split_and_merge(vector<Point> src, float epsilon); //Split and merge algorithm on each contour (Ramer–Douglas–Peucker algorithm), pseudocode used from wiki page
 
-
-void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement better
+void find_skeleton(Mat& src, Mat& dst)
 {
     // Using morphological method
     Mat skel(src.size(), CV_8UC1, Scalar(BLACK));
@@ -35,11 +36,11 @@ void findSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement be
     return;
 }
 
-void findConnectedSkeleton(Mat& src, Mat& dst) //From summer work, should re-implement better
+void find_skeleton_connected(Mat& src, Mat& dst)
 {
     /*  Medial Axis Transformation skeletonisation method, taken from Digital Image Processing book, pg650-653
         Algorithm steps:
-        For each pixel:
+        For each boundary pixel:
             1. test pixels neighbours
             p8 p1 p2  |
             p7 p0 p3  | +y
@@ -185,3 +186,136 @@ void edge_detect(Mat& src, Mat& dst)
     filter2D(src, dst, -1, kernel);
     return;
 }
+
+void reduce_points(Mat& src, Mat dst)
+{
+    /* Algorithm plan:
+        1. Find points where Tp0 <=3
+        2. Mask these bifurcation points to create separate polys
+        3. Find contours
+        4. Split and merge algorithm on each contour (Ramer–Douglas–Peucker algorithm), pseudocode used from wiki page
+        5. combine contours
+    */
+    Mat temp = src.clone();
+    Mat temp2(src.size(), CV_8UC1, Scalar(BLACK));
+
+    vector<Point> splitPt;
+    vector<vector<Point> > lineSegs, lineSegsReduced;
+    bool p[9];
+    int Tp0;
+    int avgSegSize = 0;
+
+    for(int i=1; i<(src.rows-2); i++)    //x values
+        for(int j=1; j<(src.cols-2); j++) //y values
+        {
+            if(src.at<uchar>(i,j) == WHITE)
+            {
+                Tp0 = 0;
+
+                p[0] = src.at<uchar>(i  , j  );
+                p[1] = src.at<uchar>(i-1, j  );
+                p[2] = src.at<uchar>(i-1, j+1);
+                p[3] = src.at<uchar>(i  , j+1);
+                p[4] = src.at<uchar>(i+1, j+1);
+                p[5] = src.at<uchar>(i+1, j  );
+                p[6] = src.at<uchar>(i+1, j-1);
+                p[7] = src.at<uchar>(i  , j-1);
+                p[8] = src.at<uchar>(i-1, j-1);
+
+                for(int k=1; k<9; k++)
+                    if((k!=1) && (p[k] == 1) && (p[k-1] == 0))
+                        Tp0++;
+                if((p[1] == 1) && (p[8] == 0))
+                    Tp0++;
+
+                if(Tp0 > 2)
+                {
+                    splitPt.push_back(Point(i,j));
+
+                    temp.at<uchar>(i  , j  ) = BLACK;
+                    temp.at<uchar>(i-1, j  ) = BLACK;
+                    temp.at<uchar>(i-1, j+1) = BLACK;
+                    temp.at<uchar>(i  , j+1) = BLACK;
+                    temp.at<uchar>(i+1, j+1) = BLACK;
+                    temp.at<uchar>(i+1, j  ) = BLACK;
+                    temp.at<uchar>(i+1, j-1) = BLACK;
+                    temp.at<uchar>(i  , j-1) = BLACK;
+                    temp.at<uchar>(i-1, j-1) = BLACK;
+                }
+            }
+        }
+
+    findContours(temp, lineSegs, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_TC89_KCOS);
+
+    for(int i=0; i<lineSegs.size(); i++)
+        avgSegSize += arcLength(lineSegs[i], false);
+    avgSegSize /= lineSegs.size();
+
+    float sizeTolerance = 0.3;
+    for(int i=0; i<lineSegs.size(); i++)
+    {
+        if(arcLength(lineSegs[i], false) >= (avgSegSize * sizeTolerance))
+        {
+            lineSegsReduced.push_back(lineSegs[i]);
+            approxPolyDP(lineSegs[i], lineSegsReduced[lineSegsReduced.size()-1], 30, true);
+        }
+    }
+
+
+    drawContours(temp2, lineSegsReduced, -1, Scalar(WHITE));
+    namedWindow("temp2", WINDOW_NORMAL);
+    imshow("temp2", temp2);
+
+    dst = temp.clone();
+
+    return;
+}
+void reduce_points(Mat& src, Mat dst);
+
+//vector<Point> split_and_merge(vector<Point> pts, float epsilon)
+//{// Find the point with the maximum distance
+//   int dmax = 0;
+//   float d = 0;
+//   int index = 0;
+//   int endL = pts.size();
+//
+//   vector<Point> recResults1, recResults2;
+//   vector<Point> partPts1, partPts2;
+//   vector<Point> resultList;
+//
+//   for(int i=1; i<(endL-1); i++)
+//   {
+//        d = sqrt(pow(pts[0].x - pts[endL].x, 2) + pow(pts[0].y - pts[endL].y, 2));
+//        if(d > dmax)
+//        {
+//            index = i;
+//            dmax = d;
+//        }
+//   }
+//   if(dmax > epsilon)
+//   {// Recursive call
+//        for(int i=0; i<index; i++)
+//            partPts1.push_back(pts[i]);
+//        for(int i=index; i<endL; i++)
+//            partPts2.push_back(pts[i]);
+//
+//        recResults1 = split_and_merge(partPts1, epsilon);
+//        recResults2 = split_and_merge(partPts2, epsilon);
+//
+//    // Build the result list
+//        for(int i=0; i<(endL-1); i++)
+//            resultList.push_back(recResults1[i]);
+//        for(int i=0; i<endL; i++)
+//            resultList.push_back(recResults2[i]);
+//
+//   }
+//   else
+//   {
+//       resultList.clear();
+//       resultList.push_back(pts[0]);
+//       resultList.push_back(pts[endL]);
+//   }
+//
+//    // Return the result
+//    return resultList;
+//}

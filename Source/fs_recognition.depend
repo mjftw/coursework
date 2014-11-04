@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1415059554 source:d:\libaries\uni work\year 3\part iii project\source\main.cpp
+1415065181 source:d:\libaries\uni work\year 3\part iii project\source\main.cpp
 	<iostream>
 	<opencv2/core/core.hpp>
 	<opencv2/highgui/highgui.hpp>
@@ -7,8 +7,9 @@
 	"libs.h"
 	"C:/opencv/build/include/opencv2/opencv.hpp"
 	"C:/opencv/build/include/opencv2/opencv_modules.hpp"
+	<cmath>
 
-1415059289 d:\libaries\uni work\year 3\part iii project\source\libs.h
+1415069083 d:\libaries\uni work\year 3\part iii project\source\libs.h
 
 1387532997 c:\opencv\build\include\opencv2\opencv.hpp
 	"opencv2/core/core_c.h"
