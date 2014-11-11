@@ -38,8 +38,6 @@ int main()
     float epsilon = 30, sizeTol = 0.3;
     reduce_points(dst, dst, epsilon, sizeTol);
 
-    get_desc_points(src);
-
     namedWindow("Final", WINDOW_NORMAL);
     imshow("Final", dst);
 

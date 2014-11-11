@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1415688463 source:d:\libaries\uni work\year 3\part iii project\source\data_label\main.cpp
+	<iostream>
+	<opencv2/core/core.hpp>
+	<opencv2/highgui/highgui.hpp>
+	<opencv2/imgproc/imgproc.hpp>
+	"data_label.h"
+
+1415688674 d:\libaries\uni work\year 3\part iii project\source\data_label\data_label.h
+	<iostream>
+	<fstream>
+	<opencv2/core/core.hpp>
+	<opencv2/highgui/highgui.hpp>
+	<opencv2/imgproc/imgproc.hpp>
+
