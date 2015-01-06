@@ -1,0 +1,123 @@
+function [15:0] atan_LUT; //LUTout = atan(2^(-i)) in degrees
+	input i [3:0];
+	always
+	begin
+		case(i)								//LUTout =
+			0:  atan_LUT=16'b0011001001000011; 	//45.000000
+			1:  atan_LUT=16'b0001110110101100; 	//22.500000
+			2:  atan_LUT=16'b0000111110101101; 	//11.250000
+			3:  atan_LUT=16'b0000011111110101; 	// 5.625000
+			4:  atan_LUT=16'b0000001111111110; 	// 2.812500
+			5:  atan_LUT=16'b0000000111111111; 	// 1.406250
+			6:  atan_LUT=16'b0000000011111111; 	// 0.703125
+			7:  atan_LUT=16'b0000000001111111; 	// 0.351562
+			8:  atan_LUT=16'b0000000000111111; 	// 0.175781
+			9:  atan_LUT=16'b0000000000011111; 	// 0.087891
+			10: atan_LUT=16'b0000000000001111; 	// 0.043945
+			11: atan_LUT=16'b0000000000000111; 	// 0.021973
+			12: atan_LUT=16'b0000000000000011; 	// 0.010986
+			13: atan_LUT=16'b0000000000000001; 	// 0.005493
+			14: atan_LUT=16'b0000000000000000; 	// 0.002747
+			15: atan_LUT=16'b0000000000000000; 	// 0.001373
+		endcase
+	end
+endfunction
+
+module arithmetic_shifter #(parameter i = 0)
+(
+	input logic in [15:0],
+	output logic out [15:0]
+);
+	always
+	begin
+		out[15] = in[15];
+		out[14:0] = in[15:1] >> i;
+	end
+endmodule
+
+module rotational_cordic
+(
+	input x [15:0], y [15:0], theta [15:0], reset, clk, start,
+	output xprime [15:0], yprime [15:0], data_out_rot
+);
+	reg x_regs [16:1]; //element [16] holds the cordic outputs
+	reg y_regs [16:1];
+	reg z_regs [16:1];
+	
+
+	cordic_blk #(0) blk_1(.xin(x), .yin(y), .zin(theta), .xout(x_regs[1]), .yout(y_regs[1]), .zout(z_regs[1]));
+
+	cordic_blk #(1) blk_1(.xin(x_regs[1]), .yin(y_regs[1]), .zin(z_regs[1]), .xout(x_regs[2]), .yout(y_regs[2]), .zout(z_regs[2]));
+	cordic_blk #(2) blk_1(.xin(x_regs[2]), .yin(y_regs[1]), .zin(z_regs[2]), .xout(x_regs[3]), .yout(y_regs[3]), .zout(z_regs[3]));
+	cordic_blk #(3) blk_1(.xin(x_regs[3]), .yin(y_regs[3]), .zin(z_regs[3]), .xout(x_regs[4]), .yout(y_regs[4]), .zout(z_regs[4]));
+	cordic_blk #(4) blk_1(.xin(x_regs[4]), .yin(y_regs[4]), .zin(z_regs[4]), .xout(x_regs[5]), .yout(y_regs[5]), .zout(z_regs[5]));
+	cordic_blk #(5) blk_1(.xin(x_regs[5]), .yin(y_regs[5]), .zin(z_regs[5]), .xout(x_regs[6]), .yout(y_regs[6]), .zout(z_regs[6]));
+	cordic_blk #(6) blk_1(.xin(x_regs[6]), .yin(y_regs[6]), .zin(z_regs[6]), .xout(x_regs[7]), .yout(y_regs[7]), .zout(z_regs[7]));
+	cordic_blk #(7) blk_1(.xin(x_regs[7]), .yin(y_regs[7]), .zin(z_regs[7]), .xout(x_regs[8]), .yout(y_regs[8]), .zout(z_regs[8]));
+	cordic_blk #(8) blk_1(.xin(x_regs[8]), .yin(y_regs[8]), .zin(z_regs[8]), .xout(x_regs[9]), .yout(y_regs[9]), .zout(z_regs[9]));
+	cordic_blk #(9) blk_1(.xin(x_regs[9]), .yin(y_regs[9]), .zin(z_regs[9]), .xout(x_regs[10]), .yout(y_regs[10]), .zout(z_regs[10]));
+	cordic_blk #(10) blk_1(.xin(x_regs[10]), .yin(y_regs[10]), .zin(z_regs[10]), .xout(x_regs[11]), .yout(y_regs[11]), .zout(z_regs[11]));
+	cordic_blk #(11) blk_1(.xin(x_regs[11]), .yin(y_regs[11]), .zin(z_regs[11]), .xout(x_regs[12]), .yout(y_regs[12]), .zout(z_regs[12]));
+	cordic_blk #(12) blk_1(.xin(x_regs[12]), .yin(y_regs[12]), .zin(z_regs[12]), .xout(x_regs[13]), .yout(y_regs[13]), .zout(z_regs[13]));
+	cordic_blk #(13) blk_1(.xin(x_regs[13), .yin(y_regs[13]), .zin(z_regs[13]), .xout(x_regs[14]), .yout(y_regs[14]), .zout(z_regs[14]));
+	cordic_blk #(14) blk_1(.xin(x_regs[14), .yin(y_regs[14]), .zin(z_regs[14]), .xout(x_regs[15]), .yout(y_regs[15]), .zout(z_regs[15]));
+	
+	cordic_blk #(15) blk_1(.xin(x_regs[15), .yin(y_regs[15]), .zin(z_regs[15]), .xout(x_regs[16]), .yout(y_regs[16]), .zout(z_regs[16]));
+
+	always_ff(@posedge clk)
+	begin
+		if(reset) //must check these
+		begin
+			xprime <= 0;
+			yprime <= 0;
+			data_out_rot <= 0;
+		end
+		else if(start)
+		begin
+			
+		end
+	end
+	
+endmodule
+
+module cordic_blk #(parameter i = 0)
+(
+	input xin [15:0], yin [15:0], zin [15:0],
+	output xout [15:0], yout [15:0], zout [15:0]
+);
+	logic x_shifted [15:0], y_shifted [15:0];
+	
+	arithmetic_shifter #(i) x_shifter(.in(xin), .out(x_shifted);
+	arithmetic_shifter #(i) y_shifter(.in(yin), .out(y_shifted);
+
+	always
+	begin
+		if(i == 0) //z datapath
+			zout = zin + atan_LUT(i);
+		else
+		begin
+			if(zout[15] == 0)
+				zout = zin - atan_LUT(i);
+			else
+				zout = zin + atan_LUT(i);
+		end
+		
+		if(zout[15] == 0) // x datapath
+			xout = xin - y_shifted;
+		else
+			xout = xin + y_shifted;
+
+		if(zout[15] == 0) // y datapath
+			yout = yin + x_shifter;
+		else
+			yout = yin - x_shifter;
+	end
+
+endmodule
+
+
+
+
+
+
+
