@@ -29,9 +29,10 @@ module cordic_multi_blk_test;
 	
 	always_comb
 	begin
-		xprime = xprime_unscaled * 1.76;
-		yprime = yprime_unscaled * 1.76;
+		xprime = xprime_unscaled * 0.607;
+		yprime = yprime_unscaled * 0.607;
 	end
+	
 	
 	initial //clock generation
 	begin
@@ -41,9 +42,9 @@ module cordic_multi_blk_test;
 	
 	initial //set up input data
 	begin
-		x_in = 16'd0;
-		y_in = 16'd1;
-		z_in = 16'd20;
+		x_in = 16'b0000000100000000;
+		y_in = 16'b0000000100000000;
+		z_in = 16'b0001111000000000;
 	end
 	
 	initial //reset signal

@@ -26,22 +26,17 @@ module cordic_blk #(parameter i = 0) //cordic block
 
 	always_comb
 	begin
-		if(i == 0) //z datapath
-			z_int = z_in + atan_LUT(i);
+		if(z_int[15] == 0) // z datapath
+			z_int = z_in - atan_LUT(i);
 		else
-		begin
-			if(z_out[15] == 0)
-				z_int = z_in - atan_LUT(i);
-			else
-				z_int = z_in + atan_LUT(i);
-		end
+			z_int = z_in + atan_LUT(i);
 		
-		if(z_out[15] == 0) // x datapath
+		if(z_int[15] == 0) // x datapath
 			x_int = x_in - y_shifted;
 		else
 			x_int = x_in + y_shifted;
 
-		if(z_out[15] == 0) // y datapath
+		if(z_int[15] == 0) // y datapath
 			y_int = y_in + x_shifted;
 		else
 			y_int = y_in - x_shifted;
@@ -68,22 +63,22 @@ module cordic_blk #(parameter i = 0) //cordic block
 	function [15:0] atan_LUT; //LUTout = atan(2^(-i)) in degrees
 		input [3:0] i ;
 		case(i)									//LUTout =
-			0:  atan_LUT=16'b0011001001000011; 	//45.000000
-			1:  atan_LUT=16'b0001110110101100; 	//22.500000
-			2:  atan_LUT=16'b0000111110101101; 	//11.250000
-			3:  atan_LUT=16'b0000011111110101; 	// 5.625000
-			4:  atan_LUT=16'b0000001111111110; 	// 2.812500
-			5:  atan_LUT=16'b0000000111111111; 	// 1.406250
-			6:  atan_LUT=16'b0000000011111111; 	// 0.703125
-			7:  atan_LUT=16'b0000000001111111; 	// 0.351562
-			8:  atan_LUT=16'b0000000000111111; 	// 0.175781
-			9:  atan_LUT=16'b0000000000011111; 	// 0.087891
-			10: atan_LUT=16'b0000000000001111; 	// 0.043945
-			11: atan_LUT=16'b0000000000000111; 	// 0.021973
-			12: atan_LUT=16'b0000000000000011; 	// 0.010986
-			13: atan_LUT=16'b0000000000000001; 	// 0.005493
-			14: atan_LUT=16'b0000000000000000; 	// 0.002747
-			15: atan_LUT=16'b0000000000000000; 	// 0.001373
+			0:  atan_LUT=16'b0010110100000000; 	//45.000000
+			1:  atan_LUT=16'b0001101010010000; 	//26.565012
+			2:  atan_LUT=16'b0000111000001001; 	//14.036243
+			3:  atan_LUT=16'b0000011100100000;	// 7.125016
+			4:  atan_LUT=16'b0000001110010011; 	// 3.576334
+			5:  atan_LUT=16'b0000000111001010; 	// 1.789911
+			6:  atan_LUT=16'b0000000011100101; 	// 0.895174
+			7:  atan_LUT=16'b0000000001110010; 	// 0.447614
+			8:  atan_LUT=16'b0000000000111001; 	// 0.223811
+			9:  atan_LUT=16'b0000000000011100; 	// 0.111906
+			10: atan_LUT=16'b0000000000001110; 	// 0.055953
+			11: atan_LUT=16'b0000000000000111; 	// 0.027976
+			12: atan_LUT=16'b0000000000000011; 	// 0.013988
+			13: atan_LUT=16'b0000000000000001; 	// 0.006994
+			14: atan_LUT=16'b0000000000000000; 	// 0.003497
+			15: atan_LUT=16'b0000000000000000; 	// 0.001749
 		endcase
 	endfunction
 endmodule
@@ -122,8 +117,8 @@ module rotational_cordic //acts as top level interconnect for all the cordic blo
 	
 	always_comb
 	begin
-		xprime = xprime_unscaled * 1.76;
-		yprime = yprime_unscaled * 1.76;
+		xprime = xprime_unscaled * 0.607;
+		yprime = yprime_unscaled * 0.607;
 	end
 	
 endmodule
