@@ -12,7 +12,6 @@ module cordic_blk_test;
 	logic valid_out;
 	
 	cordic_blk #(0) blk_1 (.*);
-	cordic_blk #(1 blk_2 (.*);
 	
 	initial //clock generation
 	begin
@@ -25,14 +24,15 @@ module cordic_blk_test;
 		x_in = 16'd0;
 		y_in = 16'd1;
 		z_in = 16'd20;
+		valid_in = '0;
 	end
 	
 	initial
 	begin
 		reset = '0;
 		start = '0;
-		#6ns reset = '1;
-		#5ns reset = '0;
+		#3ns reset = '1;
+		#7ns reset = '0;
 		#10ns start = '1;
 	end
 	
