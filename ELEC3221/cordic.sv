@@ -1,22 +1,25 @@
 module arithmetic_shifter #(parameter i = 0)
 (
-	input logic [15:0] in,
-	output logic [15:0] out
+	input logic signed [15:0] in,
+	output logic signed [15:0] out
 );
-	always
+	always_comb
 	begin
-		out[14:0] = in[15:1] >> i;
-		out[15] = in[15];
+		out = in >>> i;
 	end
 endmodule
 
 module cordic_blk #(parameter i = 0) //cordic block
 (
-	input logic [15:0] x_in, [15:0] y_in, [15:0] z_in, reset, clk, start, valid_in,
-	output logic [15:0] x_out, [15:0] y_out, [15:0] z_out, valid_out
+	input logic signed [15:0] x_in, [15:0] y_in, [15:0] z_in,
+	input logic reset, clk, start, valid_in,
+	output logic signed [15:0] x_out, [15:0] y_out, [15:0] z_out,
+	output logic valid_out
 );
-	logic x_shifted [15:0], y_shifted [15:0];
-	logic x_int [15:0], y_int [15:0], z_int [15:0];
+	logic signed [15:0] y_shifted;
+	logic signed [15:0] x_int;
+	logic signed [15:0] y_int;
+	logic signed [15:0] z_int;
 	
 	arithmetic_shifter #(i) x_shifter(.in(x_in), .out(x_shifted));
 	arithmetic_shifter #(i) y_shifter(.in(y_in), .out(y_shifted));
@@ -39,9 +42,9 @@ module cordic_blk #(parameter i = 0) //cordic block
 			x_int = x_in + y_shifted;
 
 		if(z_out[15] == 0) // y datapath
-			y_int = y_in + x_shifter;
+			y_int = y_in + x_shifted;
 		else
-			y_int = y_in - x_shifter;
+			y_int = y_in - x_shifted;
 	end
 	
 	always_ff @(posedge clk)
@@ -63,7 +66,7 @@ module cordic_blk #(parameter i = 0) //cordic block
 	end
 	
 	function [15:0] atan_LUT; //LUTout = atan(2^(-i)) in degrees
-		input i [3:0];
+		input [3:0] i ;
 		case(i)									//LUTout =
 			0:  atan_LUT=16'b0011001001000011; 	//45.000000
 			1:  atan_LUT=16'b0001110110101100; 	//22.500000
@@ -87,14 +90,16 @@ endmodule
 
 module rotational_cordic //acts as top level interconnect for all the cordic blocks *TODO* scale output
 (
-	input logic [15:0] x, [15:0] y, [15:0] theta, reset, clk, start,
-	output logic [15:0] xprime, [15:0] yprime, data_out_rot
+	input logic signed [15:0] x, [15:0] y, [15:0] theta,
+	input logic	reset, clk, start,
+	output logic signed [15:0] xprime, [15:0] yprime,
+	output logic data_out_rot
 );
 
-	wire [15:0] x_regs [15:1];
-	wire [15:0] y_regs [15:1];
-	wire [15:0] z_regs [15:1];
-	wire [15:1] valid_flags;
+	wire signed [15:1] x_regs [15:0];
+	wire signed [15:1] y_regs [15:0];
+	wire signed [15:1] z_regs [15:0];
+	wire signed [15:1] valid_flags;
 	
 	//wire z_out [15:0];
 	
@@ -143,7 +148,7 @@ module rotational_cordic //acts as top level interconnect for all the cordic blo
 	cordic_blk #(14) blk_14(.x_in(x_regs[14]), .y_in(y_regs[14]), .z_in(z_regs[14]), .x_out(x_regs[15]), .y_out(y_regs[15]), .z_out(z_regs[15]),
 	.reset(reset), .clk(clk), .start(start), .valid_in(valid_flags[14]), .valid_out(valid_flags[15]));
 	
-	cordic_blk #(15) blk_15(.x_in(x_regs[15), .y_in(y_regs[15]), .z_in(z_regs[15]), .x_out(xprime), .y_out(yprime)/*, .z_out(z_out)*/,
+	cordic_blk #(15) blk_15(.x_in(x_regs[15]), .y_in(y_regs[15]), .z_in(z_regs[15]), .x_out(xprime), .y_out(yprime)/*, .z_out(z_out)*/,
 	.reset(reset), .clk(clk), .start(start), .valid_in(valid_flags[15]), .valid_out(data_out_rot));
 
 endmodule
