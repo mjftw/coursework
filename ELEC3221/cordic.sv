@@ -1,7 +1,7 @@
 module arithmetic_shifter #(parameter i = 0)
 (
-	input logic in [15:0],
-	output logic out [15:0]
+	input logic [15:0] in,
+	output logic [15:0] out
 );
 	always
 	begin
@@ -12,14 +12,14 @@ endmodule
 
 module cordic_blk #(parameter i = 0) //cordic block
 (
-	input logic x_in [15:0], y_in [15:0], z_in [15:0], reset, clk, start, valid_in,
-	output logic x_out [15:0], y_out [15:0], z_out [15:0], valid_out
+	input logic [15:0] x_in, [15:0] y_in, [15:0] z_in, reset, clk, start, valid_in,
+	output logic [15:0] x_out, [15:0] y_out, [15:0] z_out, valid_out
 );
 	logic x_shifted [15:0], y_shifted [15:0];
 	logic x_int [15:0], y_int [15:0], z_int [15:0];
 	
-	arithmetic_shifter #(i) x_shifter(.in(x_in), .out(x_shifted);
-	arithmetic_shifter #(i) y_shifter(.in(y_in), .out(y_shifted);
+	arithmetic_shifter #(i) x_shifter(.in(x_in), .out(x_shifted));
+	arithmetic_shifter #(i) y_shifter(.in(y_in), .out(y_shifted));
 
 	always_comb
 	begin
@@ -64,40 +64,37 @@ module cordic_blk #(parameter i = 0) //cordic block
 	
 	function [15:0] atan_LUT; //LUTout = atan(2^(-i)) in degrees
 		input i [3:0];
-		always
-		begin
-			case(i)									//LUTout =
-				0:  atan_LUT=16'b0011001001000011; 	//45.000000
-				1:  atan_LUT=16'b0001110110101100; 	//22.500000
-				2:  atan_LUT=16'b0000111110101101; 	//11.250000
-				3:  atan_LUT=16'b0000011111110101; 	// 5.625000
-				4:  atan_LUT=16'b0000001111111110; 	// 2.812500
-				5:  atan_LUT=16'b0000000111111111; 	// 1.406250
-				6:  atan_LUT=16'b0000000011111111; 	// 0.703125
-				7:  atan_LUT=16'b0000000001111111; 	// 0.351562
-				8:  atan_LUT=16'b0000000000111111; 	// 0.175781
-				9:  atan_LUT=16'b0000000000011111; 	// 0.087891
-				10: atan_LUT=16'b0000000000001111; 	// 0.043945
-				11: atan_LUT=16'b0000000000000111; 	// 0.021973
-				12: atan_LUT=16'b0000000000000011; 	// 0.010986
-				13: atan_LUT=16'b0000000000000001; 	// 0.005493
-				14: atan_LUT=16'b0000000000000000; 	// 0.002747
-				15: atan_LUT=16'b0000000000000000; 	// 0.001373
-			endcase
-		end
+		case(i)									//LUTout =
+			0:  atan_LUT=16'b0011001001000011; 	//45.000000
+			1:  atan_LUT=16'b0001110110101100; 	//22.500000
+			2:  atan_LUT=16'b0000111110101101; 	//11.250000
+			3:  atan_LUT=16'b0000011111110101; 	// 5.625000
+			4:  atan_LUT=16'b0000001111111110; 	// 2.812500
+			5:  atan_LUT=16'b0000000111111111; 	// 1.406250
+			6:  atan_LUT=16'b0000000011111111; 	// 0.703125
+			7:  atan_LUT=16'b0000000001111111; 	// 0.351562
+			8:  atan_LUT=16'b0000000000111111; 	// 0.175781
+			9:  atan_LUT=16'b0000000000011111; 	// 0.087891
+			10: atan_LUT=16'b0000000000001111; 	// 0.043945
+			11: atan_LUT=16'b0000000000000111; 	// 0.021973
+			12: atan_LUT=16'b0000000000000011; 	// 0.010986
+			13: atan_LUT=16'b0000000000000001; 	// 0.005493
+			14: atan_LUT=16'b0000000000000000; 	// 0.002747
+			15: atan_LUT=16'b0000000000000000; 	// 0.001373
+		endcase
 	endfunction
 endmodule
 
-module rotational_cordic //acts as top level interconnect for all the cordic blocks
+module rotational_cordic //acts as top level interconnect for all the cordic blocks *TODO* scale output
 (
-	input logic x [15:0], y [15:0], theta [15:0], reset, clk, start,
-	output logic xprime [15:0], yprime [15:0], data_out_rot
+	input logic [15:0] x, [15:0] y, [15:0] theta, reset, clk, start,
+	output logic [15:0] xprime, [15:0] yprime, data_out_rot
 );
 
-	wire x_regs [15:1][15:0];
-	wire y_regs [15:1][15:0];
-	wire z_regs [15:1][15:0];
-	wire valid_flags [15:1];
+	wire [15:0] x_regs [15:1];
+	wire [15:0] y_regs [15:1];
+	wire [15:0] z_regs [15:1];
+	wire [15:1] valid_flags;
 	
 	//wire z_out [15:0];
 	
