@@ -19,20 +19,24 @@ module cordic_blk_test;
 		forever #5ns clk = ~clk;
 	end
 	
-	initial //set up inputs
+	initial //set up input data
 	begin
 		x_in = 16'd0;
 		y_in = 16'd1;
 		z_in = 16'd20;
-		valid_in = '0;
+		valid_in = '1;
 	end
 	
-	initial
+	initial //reset signal
 	begin
 		reset = '0;
-		start = '0;
 		#3ns reset = '1;
 		#7ns reset = '0;
+	end
+	
+	initial //start signal
+	begin
+		start = '0;
 		#10ns start = '1;
 	end
 	

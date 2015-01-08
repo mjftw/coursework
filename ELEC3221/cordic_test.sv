@@ -10,19 +10,23 @@ module rotational_cordic_test;
 		forever #5ns clk = ~clk;
 	end
 	
-	initial //set up inputs
+	initial //set up input data
 	begin
 		x = 16'd0;
 		y = 16'd1;
 		theta = 16'd20;
 	end
 	
-	initial
+	initial //reset signal
 	begin
 		reset = '0;
+		#3ns reset = '1;
+		#7ns reset = '0;
+	end
+	
+	initial //start signal
+	begin
 		start = '0;
-		#6ns reset = '1;
-		#5ns reset = '0;
 		#10ns start = '1;
 	end
 	
