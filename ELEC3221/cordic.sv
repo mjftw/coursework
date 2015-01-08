@@ -56,7 +56,7 @@ module cordic_blk #(parameter i = 0) //cordic block
 			z_out <= 0;
 			valid_out <= 0;
 		end
-		else if(start)
+		else
 		begin
 			x_out <= x_int;
 			y_out <= y_int;

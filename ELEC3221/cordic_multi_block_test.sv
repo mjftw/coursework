@@ -17,7 +17,7 @@ module cordic_multi_blk_test;
 	
 	//wire z_out [15:0];
 	
-	cordic_blk #(0) blk_0(.x_in(x), .y_in(y), .z_in(theta), .x_out(x_regs[1]), .y_out(y_regs[1]), .z_out(z_regs[1]),
+	cordic_blk #(0) blk_0(.x_in(x_in), .y_in(y_in), .z_in(z_in), .x_out(x_regs[1]), .y_out(y_regs[1]), .z_out(z_regs[1]),
 	.reset(reset), .clk(clk), .start(start), .valid_in(start), .valid_out(valid_flags[1]));
 
 	cordic_blk #(1) blk_1(.x_in(x_regs[1]), .y_in(y_regs[1]), .z_in(z_regs[1]), .x_out(x_regs[2]), .y_out(y_regs[2]), .z_out(z_regs[2]),
