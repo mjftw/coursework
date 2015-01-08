@@ -1,6 +1,6 @@
 module rotational_cordic_test;
-	logic [15:0] x , [15:0] y, [15:0] theta, reset, clk, start,
-	[15:0] xprime, [15:0] yprime, data_out_rot;
+	logic [15:0] x, y, theta, xprime, yprime;
+	logic reset, clk, start, data_out_rot;
 	
 	rotational_cordic cordic (.*);
 	

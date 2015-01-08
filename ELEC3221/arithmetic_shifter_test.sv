@@ -2,7 +2,7 @@ module arithmetic_shifter_test;		//TESTED and WORKING
 	logic signed [15:0] in;
 	logic signed [15:0] out;
 	
-	arithmetic_shifter shift #(1) (.*);
+	arithmetic_shifter #(1) shift (.*);
 	
 	initial
 	begin
