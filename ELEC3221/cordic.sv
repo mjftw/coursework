@@ -18,29 +18,10 @@ module cordic_blk #(parameter i = 0) //cordic block
 );
 	logic signed [15:0] x_shifted;
 	logic signed [15:0] y_shifted;
-	logic signed [15:0] x_int;
-	logic signed [15:0] y_int;
-	logic signed [15:0] z_int;
 	
 	arithmetic_shifter #(i) x_shifter(.in(x_in), .out(x_shifted));
 	arithmetic_shifter #(i) y_shifter(.in(y_in), .out(y_shifted));
 
-	always_comb
-	begin
-		if(z_int[15] == 0) // z datapath
-		begin
-			z_int = z_in - atan_LUT(i);
-			x_int = x_in - y_shifted;
-			y_int = y_in + x_shifted;
-		end
-		else	
-		begin
-			z_int = z_in + atan_LUT(i);
-			x_int = x_in + y_shifted;
-			y_int = y_in - x_shifted;
-		end
-	end
-	
 	always_ff @(posedge clk)
 	begin
 		if(reset) //*TODO* may need to be asynchronus?
@@ -52,9 +33,19 @@ module cordic_blk #(parameter i = 0) //cordic block
 		end
 		else
 		begin
-			x_out <= x_int;
-			y_out <= y_int;
-			z_out <= z_int;		
+			if(z_in[15] == 0) // z datapath
+			begin
+				x_out <= x_in - y_shifted;
+				y_out <= y_in + x_shifted;
+				z_out <= z_in - atan_LUT(i);
+			end
+			else	
+			begin
+				x_out <= x_in + y_shifted;
+				y_out <= y_in - x_shifted;
+				z_out <= z_in + atan_LUT(i);
+			end
+	
 			valid_out <= valid_in;
 		end
 	end
