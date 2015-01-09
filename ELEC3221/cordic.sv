@@ -16,6 +16,7 @@ module cordic_blk #(parameter i = 0) //cordic block
 	output logic signed [15:0] x_out, [15:0] y_out, [15:0] z_out,
 	output logic valid_out
 );
+	logic signed [15:0] x_shifted;
 	logic signed [15:0] y_shifted;
 	logic signed [15:0] x_int;
 	logic signed [15:0] y_int;
@@ -27,19 +28,17 @@ module cordic_blk #(parameter i = 0) //cordic block
 	always_comb
 	begin
 		if(z_int[15] == 0) // z datapath
+		begin
 			z_int = z_in - atan_LUT(i);
-		else
-			z_int = z_in + atan_LUT(i);
-		
-		if(z_int[15] == 0) // x datapath
 			x_int = x_in - y_shifted;
-		else
-			x_int = x_in + y_shifted;
-
-		if(z_int[15] == 0) // y datapath
 			y_int = y_in + x_shifted;
-		else
+		end
+		else	
+		begin
+			z_int = z_in + atan_LUT(i);
+			x_int = x_in + y_shifted;
 			y_int = y_in - x_shifted;
+		end
 	end
 	
 	always_ff @(posedge clk)
