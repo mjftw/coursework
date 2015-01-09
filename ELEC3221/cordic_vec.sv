@@ -1,5 +1,3 @@
-`define ROTATE
-//`define VECTOR
 
 `define K 0.60753
 
@@ -39,8 +37,7 @@ module cordic_blk #(parameter i = 0) //cordic block
 		end
 		else
 		begin
-		`ifdef ROTATE if(z_in[15] == 0) `endif
-		`ifdef VECTOR if(y_in[15] == 0) `endif
+			if(y_in[15] == 0)
 			begin
 				x_out <= x_in - y_shifted;
 				y_out <= y_in + x_shifted;
@@ -80,14 +77,12 @@ module cordic_blk #(parameter i = 0) //cordic block
 	endfunction
 endmodule
 
-module rotational_cordic //acts as top level interconnect for all the cordic blocks *TODO* scale output
+module vectoring_cordic //acts as top level interconnect for all the cordic blocks *TODO* scale output
 (
 	input logic signed [15:0] x, [15:0] y, [15:0] theta,
 	input logic	reset, clk, start,
-	`ifdef ROTATE output logic signed [15:0] xprime, [15:0] yprime, `endif
-	`ifdef VECTOR output logic signed [15:0] rootxy, [15:0] atanba, `endif
-	`ifdef ROTATE output logic data_out_rot `endif
-	`ifdef VECTOR output logic data_out_vec `endif
+	output logic signed [15:0] rootxy, [15:0] atanba,
+	output logic data_out_vec
 );
 
 	wire signed [15:0] x_regs [15:1];
@@ -95,7 +90,7 @@ module rotational_cordic //acts as top level interconnect for all the cordic blo
 	wire signed [15:0] z_regs [15:1];
 	wire signed valid_flags [15:1];
 	
-	wire signed [15:0] xprime_unscaled, yprime_unscaled;
+	wire signed [15:0] xprime_unscaled;
 	
 	//wire z_out [15:0];
 	
@@ -111,24 +106,12 @@ module rotational_cordic //acts as top level interconnect for all the cordic blo
 		end
 	endgenerate
 	
-	`ifdef ROTATE
-		cordic_blk #(15) blk_15(.x_in(x_regs[15]), .y_in(y_regs[15]), .z_in(z_regs[15]), .x_out(xprime_unscaled), .y_out(yprime_unscaled),
-		.reset(reset), .clk(clk), .start(start), .valid_in(valid_flags[15]), .valid_out(data_out_rot));
-	`endif
-	
-	`ifdef VECTOR
 		cordic_blk #(15) blk_15(.x_in(x_regs[15]), .y_in(y_regs[15]), .z_in(z_regs[15]), .x_out(xprime_unscaled), .z_out(atanba),
 		.reset(reset), .clk(clk), .start(start), .valid_in(valid_flags[15]), .valid_out(data_out_rot));
-	`endif
 	
 	always_comb
 	begin	
-		`ifdef VECTOR rootxy = xprime_unscaled * `K; `endif
-		`ifdef ROTATE
-			xprime = xprime_unscaled * `K;
-			yprime = yprime_unscaled * `K;
-		`endif
-
+		rootxy = xprime_unscaled * `K;
 	end
 	
 endmodule

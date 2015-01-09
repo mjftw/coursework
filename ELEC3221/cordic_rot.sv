@@ -1,3 +1,7 @@
+
+`define K 0.60753
+
+
 module arithmetic_shifter #(parameter i = 0)
 (
 	input logic signed [15:0] in,
@@ -24,7 +28,7 @@ module cordic_blk #(parameter i = 0) //cordic block
 
 	always_ff @(posedge clk)
 	begin
-		if(reset) //*TODO* may need to be asynchronus?
+		if(reset)
 		begin
 			x_out <= 0;
 			y_out <= 0;
@@ -33,7 +37,7 @@ module cordic_blk #(parameter i = 0) //cordic block
 		end
 		else
 		begin
-			if(z_in[15] == 0) // z datapath
+			if(z_in[15] == 0)
 			begin
 				x_out <= x_in - y_shifted;
 				y_out <= y_in + x_shifted;
@@ -102,13 +106,14 @@ module rotational_cordic //acts as top level interconnect for all the cordic blo
 		end
 	endgenerate
 	
-	cordic_blk #(15) blk_15(.x_in(x_regs[15]), .y_in(y_regs[15]), .z_in(z_regs[15]), .x_out(xprime_unscaled), .y_out(yprime_unscaled)/*, .z_out(z_out)*/,
-	.reset(reset), .clk(clk), .start(start), .valid_in(valid_flags[15]), .valid_out(data_out_rot));
+		cordic_blk #(15) blk_15(.x_in(x_regs[15]), .y_in(y_regs[15]), .z_in(z_regs[15]), .x_out(xprime_unscaled), .y_out(yprime_unscaled),
+		.reset(reset), .clk(clk), .start(start), .valid_in(valid_flags[15]), .valid_out(data_out_rot));
 	
 	always_comb
-	begin
-		xprime = xprime_unscaled * 0.607;
-		yprime = yprime_unscaled * 0.607;
+	begin	
+		xprime = xprime_unscaled * `K;
+		yprime = yprime_unscaled * `K;
+
 	end
 	
 endmodule
