@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="demoV4" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="demo1">
+				<Option output="./demo1" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory="D:/Graphics/include" />
+					<Add directory="D:/Graphics/GLFW3/include" />
+					<Add directory="stb" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add directory="D:/Graphics/lib" />
+					<Add directory="D:/Graphics/GLFW3/lib-mingw" />
+				</Linker>
+			</Target>
+			<Target title="utils">
+				<Option output="./lib/demo1" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="obj/Release/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory="D:/Graphics/include" />
+					<Add directory="D:/Graphics/GLFW3/include" />
+					<Add directory="stb" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add directory="D:/Graphics/lib" />
+					<Add directory="D:/Graphics/GLFW3/lib-mingw" />
+				</Linker>
+			</Target>
+			<Target title="demo2">
+				<Option output="./demo2" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory="D:/Graphics/include" />
+					<Add directory="D:/Graphics/GLFW3/include" />
+					<Add directory="stb" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add directory="D:/Graphics/lib" />
+					<Add directory="D:/Graphics/GLFW3/lib-mingw" />
+				</Linker>
+			</Target>
+			<Target title="demo3">
+				<Option output="./demo3" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory="D:/Graphics/include" />
+					<Add directory="D:/Graphics/GLFW3/include" />
+					<Add directory="stb" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add directory="D:/Graphics/lib" />
+					<Add directory="D:/Graphics/GLFW3/lib-mingw" />
+				</Linker>
+			</Target>
+			<Target title="demo4">
+				<Option output="./demo4" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory="D:/Graphics/include" />
+					<Add directory="D:/Graphics/GLFW3/include" />
+					<Add directory="stb" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add directory="D:/Graphics/lib" />
+					<Add directory="D:/Graphics/GLFW3/lib-mingw" />
+				</Linker>
+			</Target>
+			<Target title="plane">
+				<Option output="./plane" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-Wall" />
+					<Add directory="D:/Graphics/include" />
+					<Add directory="D:/Graphics/GLFW3/include" />
+					<Add directory="stb" />
+					<Add directory="include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add directory="D:/Graphics/lib" />
+					<Add directory="D:/Graphics/GLFW3/lib-mingw" />
+				</Linker>
+			</Target>
+			<Target title="vbotest">
+				<Option output="./vbotest" prefix_auto="1" extension_auto="1" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Linker>
+					<Add library="mingw32" />
+					<Add library="glew32" />
+					<Add library="glfw3" />
+					<Add library="opengl32" />
+					<Add library="gdi32" />
+					<Add library="demo1" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="./Graphics/include" />
+			<Add directory="./Graphics/GLFW3/include" />
+			<Add directory="./include" />
+		</Compiler>
+		<Linker>
+			<Add library="mingw32" />
+			<Add library="glew32" />
+			<Add library="glfw3" />
+			<Add library="opengl32" />
+			<Add library="gdi32" />
+			<Add library="demo1" />
+			<Add directory="./Graphics/lib" />
+			<Add directory="./Graphics/GLFW3/lib-mingw" />
+			<Add directory="./lib" />
+		</Linker>
+		<Unit filename="1/test1.cpp">
+			<Option target="demo1" />
+		</Unit>
+		<Unit filename="2/tut2.c">
+			<Option compilerVar="CC" />
+			<Option target="demo2" />
+		</Unit>
+		<Unit filename="2/tut2.frag">
+			<Option target="demo2" />
+		</Unit>
+		<Unit filename="2/tut2.vert">
+			<Option target="demo2" />
+		</Unit>
+		<Unit filename="3/tutorial3.cpp">
+			<Option target="demo3" />
+		</Unit>
+		<Unit filename="3/tutorial3.frag">
+			<Option target="demo3" />
+		</Unit>
+		<Unit filename="3/tutorial3.vert">
+			<Option target="demo3" />
+		</Unit>
+		<Unit filename="3/utils.h">
+			<Option target="demo3" />
+		</Unit>
+		<Unit filename="4/tut4.h">
+			<Option target="demo1" />
+			<Option target="utils" />
+			<Option target="demo4" />
+		</Unit>
+		<Unit filename="4/tutorial4.cpp">
+			<Option target="demo4" />
+		</Unit>
+		<Unit filename="4/tutorial4.frag">
+			<Option target="demo1" />
+			<Option target="utils" />
+			<Option target="demo4" />
+		</Unit>
+		<Unit filename="4/tutorial4.geom">
+			<Option target="demo1" />
+			<Option target="utils" />
+			<Option target="demo4" />
+		</Unit>
+		<Unit filename="4/tutorial4.vert">
+			<Option target="demo1" />
+			<Option target="utils" />
+			<Option target="demo4" />
+		</Unit>
+		<Unit filename="4/utils.h">
+			<Option target="demo1" />
+		</Unit>
+		<Unit filename="include/glslprogram.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="include/stb_image.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="include/stb_image_resize.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="include/stb_image_write.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="include/stb_perlin.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="include/utils.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="include/vertexbufferobject.h">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="plane/plane.cpp">
+			<Option target="plane" />
+		</Unit>
+		<Unit filename="plane/plane.frag">
+			<Option target="plane" />
+		</Unit>
+		<Unit filename="plane/plane.vert">
+			<Option target="plane" />
+		</Unit>
+		<Unit filename="plane/tex.frag">
+			<Option target="plane" />
+		</Unit>
+		<Unit filename="plane/tex.vert">
+			<Option target="plane" />
+		</Unit>
+		<Unit filename="util/glslprogram.cpp">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="util/stb.cpp">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="util/utils2.cpp">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="util/vertexbufferobject.cpp">
+			<Option target="utils" />
+		</Unit>
+		<Unit filename="vbotest/vbo.cpp">
+			<Option target="vbotest" />
+		</Unit>
+		<Unit filename="vbotest/vbo.frag">
+			<Option target="vbotest" />
+		</Unit>
+		<Unit filename="vbotest/vbo.vert">
+			<Option target="vbotest" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

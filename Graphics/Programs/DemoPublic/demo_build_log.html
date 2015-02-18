@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>Workspace build log</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>
+<body>
+<tt>
+Build started on: <u>03-02-2015 at 14:54.34</u><br />
+Build ended on: <u>03-02-2015 at 14:54.35</u><p />
+<b>-------------- Build: demo1 in demoV4 (compiler: GNU GCC Compiler)---------------</b><br />
+mingw32-g++.exe -Wall -fexceptions -O2 -Wall -I.\Graphics\include -I.\Graphics\GLFW3\include -I.\include -ID:\Graphics\include -ID:\Graphics\GLFW3\include -Istb -Iinclude -c D:\Work\Teaching\Graphics\code\DemoPublic\1\test1.cpp -o obj\Release\1\test1.o<br />
+In file included from .\Graphics\include/glm/./detail/func_packing.hpp:193:0,<br />
+                 from .\Graphics\include/glm/glm.hpp:98,<br />
+                 from .\include/utils.h:17,<br />
+                 from D:\Work\Teaching\Graphics\code\DemoPublic\1\test1.cpp:6:<br />
+.\Graphics\include/glm/./detail/func_packing.inl: In function 'glm::uint glm::packUnorm2x16(const vec2&amp;)':<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_packing.inl:38:40: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+   return reinterpret_cast&lt;uint&amp;&gt;(Topack);<br />
+                                        ^<br />
+.\Graphics\include/glm/./detail/func_packing.inl: In function 'glm::uint glm::packSnorm2x16(const vec2&amp;)':<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_packing.inl:50:42: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+   return reinterpret_cast&lt;uint32&amp;&gt;(Topack);<br />
+                                          ^<br />
+.\Graphics\include/glm/./detail/func_packing.inl: In function 'glm::uint glm::packHalf2x16(const vec2&amp;)':<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_packing.inl:103:42: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+   return *reinterpret_cast&lt;uint*&gt;(&amp;Unpack);<br />
+                                          ^<br />
+In file included from .\Graphics\include/glm/./detail/func_integer.hpp:200:0,<br />
+                 from .\Graphics\include/glm/glm.hpp:102,<br />
+                 from .\include/utils.h:17,<br />
+                 from D:\Work\Teaching\Graphics\code\DemoPublic\1\test1.cpp:6:<br />
+.\Graphics\include/glm/./detail/func_integer.inl: In function 'void glm::umulExtended(const genUType&amp;, const genUType&amp;, genUType&amp;, genUType&amp;) [with genUType = unsigned int]':<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_integer.inl:175:42: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+   lsb = reinterpret_cast&lt;uint32&amp;&gt;(Value64);<br />
+                                          ^<br />
+.\Graphics\include/glm/./detail/func_integer.inl: In function 'void glm::imulExtended(const genIType&amp;, const genIType&amp;, genIType&amp;, genIType&amp;) [with genIType = int]':<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_integer.inl:234:41: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+   lsb = reinterpret_cast&lt;int32&amp;&gt;(Value64);<br />
+                                         ^<br />
+In file included from .\Graphics\include/glm/./detail/func_exponential.hpp:127:0,<br />
+                 from .\Graphics\include/glm/glm.hpp:96,<br />
+                 from .\include/utils.h:17,<br />
+                 from D:\Work\Teaching\Graphics\code\DemoPublic\1\test1.cpp:6:<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl: In instantiation of 'genType glm::detail::fastInversesqrt(const genType&amp;) [with genType = glm::detail::tvec1&lt;float, (glm::precision)2u&gt;; genUType = unsigned int]':</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:193:52:   required from here</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:182:8: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+    tmp = *reinterpret_cast&lt;genType*&gt;(&amp;i);<br />
+        ^<br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl: In instantiation of 'genType glm::detail::fastInversesqrt(const genType&amp;) [with genType = glm::detail::tvec2&lt;float, (glm::precision)2u&gt;; genUType = glm::detail::tvec2&lt;unsigned int, (glm::precision)2u&gt;]':</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:201:58:   required from here</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:182:8: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl: In instantiation of 'genType glm::detail::fastInversesqrt(const genType&amp;) [with genType = glm::detail::tvec3&lt;float, (glm::precision)2u&gt;; genUType = glm::detail::tvec3&lt;unsigned int, (glm::precision)2u&gt;]':</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:209:58:   required from here</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:182:8: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl: In instantiation of 'genType glm::detail::fastInversesqrt(const genType&amp;) [with genType = glm::detail::tvec4&lt;float, (glm::precision)2u&gt;; genUType = glm::detail::tvec4&lt;unsigned int, (glm::precision)2u&gt;]':</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:217:58:   required from here</font><br />
+<font color="#0000ff">.\Graphics\include/glm/./detail/func_exponential.inl:182:8: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]</font><br />
+mingw32-g++.exe -L.\Graphics\lib -L.\Graphics\GLFW3\lib-mingw -L.\lib -LD:\Graphics\lib -LD:\Graphics\GLFW3\lib-mingw -o .\demo1.exe obj\Release\1\test1.o  -s  -lmingw32 -lglew32 -lglfw3 -lopengl32 -lgdi32 -ldemo1 -lmingw32 -lglew32 -lglfw3 -lopengl32 -lgdi32<br />
+Output file is .\demo1.exe with size 62.00 KB<br />
+<font color="#0000ff">Process terminated with status 0 (0 minute(s), 0 second(s))</font><br />
+<font color="#0000ff">0 error(s), 17 warning(s) (0 minute(s), 0 second(s))</font><br />
+</tt>
+</body>
+</html>

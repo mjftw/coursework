@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<FileVersion major="1" minor="0" />
+	<ActiveTarget name="demo4" />
+	<File name="4\tutorial4.frag" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="3\tutorial3.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7243" topLine="118" />
+		</Cursor>
+	</File>
+	<File name="4\tutorial4.vert" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="4\tutorial4.geom" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1008" topLine="2" />
+		</Cursor>
+	</File>
+	<File name="2\tut2.c" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4190" topLine="79" />
+		</Cursor>
+	</File>
+	<File name="4\tutorial4.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="7360" topLine="114" />
+		</Cursor>
+		<Folding>
+			<Collapse line="37" />
+		</Folding>
+	</File>
+	<EditorTabsLayout layout="0b5fdb8054db80c40037cde900000003=*0;demoV4:4\tutorial4.cpp,1;demoV4:2\tut2.c,2;demoV4:3\tutorial3.cpp@layout2|name=dummy;caption=;state=2098174;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=180;besth=180;minw=180;minh=180;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|name=0b5fdb8054db80c40037cde900000003;caption=;state=2098172;dir=5;layer=0;row=1;pos=0;prop=100000;bestw=854;besth=386;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(5,0,1)=856|" />
+</CodeBlocks_layout_file>

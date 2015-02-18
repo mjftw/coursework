@@ -1,0 +1,55 @@
+# depslib dependency file v1.0
+1423083936 source:d:\libaries\uni work\year 3\graphics\programs\cw1\main.cpp
+	<iostream>
+	<stdlib.h>
+	<stdio.h>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+
+1344268747 d:\libaries\uni work\year 3\graphics\opengl\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1379595551 d:\libaries\uni work\year 3\graphics\opengl\glfw3\include\glfw\glfw3.h
+	<stddef.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/glcorearb.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<GLES3/gl3.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1423138781 source:d:\libaries\uni work\year 3\graphics\programs\cw1\cw1\main.cpp
+	<iostream>
+	<stdlib.h>
+	<stdio.h>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+
+1344268747 d:\libaries\uni work\year 3\graphics\programs\cw1\cw1\graphics\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1379595551 d:\libaries\uni work\year 3\graphics\programs\cw1\cw1\graphics\glfw3\include\glfw\glfw3.h
+	<stddef.h>
+	<OpenGL/gl3.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/glcorearb.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<GLES3/gl3.h>
+	<GL/gl.h>
+	<GL/glu.h>
+

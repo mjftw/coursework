@@ -1,13 +1,20 @@
 //`define ROTATE
 `define VECTOR
 
+`define K 0.60753
+
 module cordic_multi_blk_test;
 	logic signed [15:0] x_in, y_in, z_in;
-	`ifdef ROTATE logic signed [15:0] xprime, yprime, `endif
-	`ifdef VECTOR logic signed [15:0] rootxy, atanba, `endif	
 	logic reset, clk, start;
-	`ifdef ROTATE logic data_out_rot `endif
-	`ifdef VECTOR logic data_out_vec `endif	
+
+	`ifdef ROTATE
+		logic signed [15:0] xprime, yprime;
+	 	logic data_out_rot;
+	`endif
+	`ifdef VECTOR
+		logic signed [15:0] rootxy, atanba;	
+		logic data_out_vec; 
+	`endif	
 	
 	wire signed [15:0] x_regs [15:1];
 	wire signed [15:0] y_regs [15:1];
@@ -43,8 +50,13 @@ module cordic_multi_blk_test;
 	
 	always_comb
 	begin
-		xprime = xprime_unscaled * 0.607;
-		yprime = yprime_unscaled * 0.607;
+		`ifdef VECTOR
+			rootxy = xprime_unscaled * `K;
+		`endif
+		`ifdef ROTATE
+			xprime = xprime_unscaled * `K;
+			yprime = yprime_unscaled * `K;
+		`endif
 	end
 	
 	
