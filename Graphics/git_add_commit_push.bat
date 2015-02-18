@@ -1,4 +1,4 @@
 @ECHO OFF
-git add --all
+git add -A :/
 git commit -m 'Commit_from_Code::Block_IDE'
 git push origin master
