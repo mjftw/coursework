@@ -95,6 +95,12 @@ const unsigned int Isosphere::get_n_vertices()
 {
     return faces.size()*3*3;
 }
+
+const unsigned int Isosphere::get_n_normal_lines()
+{
+    return faces.size()*2*3;
+}
+
 Isosphere::Triangle::Triangle()
 {
 }
@@ -159,6 +165,23 @@ GLfloat* Isosphere::get_normals() ///NOT WORKING AT CURRENT
             normals.push_back(normal_vec);
         }
     return (GLfloat*) &normals[0];
+}
+
+GLfloat* Isosphere::get_normal_lines(GLfloat length)
+{
+    normal_lines.clear();
+    for(int i=0; i<faces.size(); i++)
+    {
+        Triangle::Point pt1, pt2;
+        faces[i].get_normal_line(pt1, pt2, length);
+        normal_lines.push_back(pt1.x);
+        normal_lines.push_back(pt1.y);
+        normal_lines.push_back(pt1.z);
+        normal_lines.push_back(pt2.x);
+        normal_lines.push_back(pt2.y);
+        normal_lines.push_back(pt2.z);
+    }
+    return (GLfloat*) &normal_lines[0];
 }
 
 void Isosphere::Triangle::subdivide(Triangle& sub0, Triangle& sub1, Triangle& sub2, Triangle& sub3)
@@ -244,10 +267,28 @@ void Isosphere::Triangle::get_normal(Point& norm_vector)
     norm_vector.z = a.x*b.y - a.y*b.x;
 
     //Normalise
-    int magnitude = sqrt(norm_vector.x*norm_vector.x + norm_vector.y*norm_vector.y + norm_vector.z*norm_vector.z);
+    GLfloat magnitude = sqrt(norm_vector.x*norm_vector.x + norm_vector.y*norm_vector.y + norm_vector.z*norm_vector.z);
     norm_vector.x /= magnitude;
     norm_vector.y /= magnitude;
     norm_vector.z /= magnitude;
+}
+
+void Isosphere::Triangle::get_normal_line(Point& pt1, Point& pt2, GLfloat length)
+{
+    //Get center of triangle
+    pt1.x = (V0.x + V1.x + V2.x)/3;
+    pt1.y = (V0.y + V1.y + V2.y)/3;
+    pt1.z = (V0.z + V1.z + V2.z)/3;
+
+    //Normalise
+    GLfloat magnitude = sqrt(pt1.x*pt1.x + pt1.y*pt1.y + pt1.z*pt1.z);
+    pt1.x /= magnitude;
+    pt1.y /= magnitude;
+    pt1.z /= magnitude;
+
+    pt2.x = pt1.x * (1 + length);
+    pt2.y = pt1.y * (1 + length);
+    pt2.z = pt1.z * (1 + length);
 }
 
 

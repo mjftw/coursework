@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
+#include <stb_image.h>
 #include "isosphere.h"
 #include "model.h"
 
@@ -217,7 +218,7 @@ void update_MVP(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat4& projection, glm::vec3& camPos)
 {
     glfwPollEvents();
-    /*
+
     if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         model = glm::rotate(model, 0.5f, glm::vec3(0.0f ,1.0f ,0.0f));
 
@@ -235,7 +236,7 @@ void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat
 
     if(glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         model = glm::rotate(model, -0.5f, glm::vec3(0.0f ,0.0f ,1.0f));
-*/
+
     if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
     {
         camPos.z += 0.05;// = glm::vec3(camPos.x, camPos.y, camPos.z + 0.05);
@@ -260,11 +261,28 @@ void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat
     update_MVP(model, view, projection);
 }
 
+/*GLuint load_texture(const char* img_path, int* w, int* h, int* bit_depth)
+{
+    unsigned char* img_data = stbi_load(img_path, w, h, bit_depth, STBI_rgb_alpha);
+    GLuint textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_2D, textureID);
+    glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, *w, *h, 0, GL_BGR, GL_UNSIGNED_BYTE, img_data);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glGenerateMipmap(GL_TEXTURE_2D);
+
+    return textureID;
+}*/
+
 
 int main(int argc, char **argv)
 {
-    Isosphere sphere1(0);
-    Isosphere sphere2(5);
+    Isosphere sphere1(4);
+    Isosphere sphere2(0);
 
     GLfloat* sphere1Verts = sphere1.get_vertices();
 
@@ -275,6 +293,13 @@ int main(int argc, char **argv)
     {
         GLfloat col = ((float)(std::rand()%100)) / 100.0;
         colours1[i] = col;
+    }
+
+    GLfloat line_colours[sphere1.get_n_normal_lines()];
+    for(int i=0; i<sphere1.get_n_normal_lines(); i++)
+    {
+        GLfloat col = ((float)(std::rand()%100)) / 100.0;
+        line_colours[i] = col;
     }
 
     GLfloat colours2[sphere2.get_n_vertices()];
@@ -333,25 +358,28 @@ int main(int argc, char **argv)
     glDepthFunc(GL_LESS);
 
     ///texture from http://podet.imcce.fr/podet_exp/app_dev.php/images/3229f30_Color%20Map.smaller_1.jpg
-    const char* globe_tex_path = "textures/globe.tga";
-    //GLuint loadTGA_glfw(globe_tex_path);
+    const char* globe_tex_path = "textures/globe.bmp";
+    int w = 4096;
+    int h = 2048;
+    int bit_depth = 24;
+
+    //GLuint textureID = load_texture(globe_tex_path, &w, &h, &bit_depth);
 
     glm::vec3 camPos(0,0,5);
     int angle = 0;
 
     glm::mat4 projection = glm::perspective(45.0f, 16.0f/9.0f, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(camPos, glm::vec3(0,0,0), glm::vec3(0,1,0));
-    glm::mat4 model = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
-    glm::mat4 model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
-    glm::mat4 model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
+    glm::mat4 model1 = glm::mat4(1.0);
+    glm::mat4 model2 = glm::mat4(1.0);
 
     do
     {
         glfwPollEvents();
 
-        angle = (angle + 1) % 360;
-        model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
-        model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
+//        angle = (angle + 1) % 360;
+//        model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
+//        model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -359,9 +387,13 @@ int main(int argc, char **argv)
         setup_geometry(sphere1.get_vertices(), colours1, sphere1.get_n_vertices());
         glDrawArrays(GL_TRIANGLES, 0, sphere1.get_n_vertices());
 
-        update_MVP(model2, view, projection);
-        setup_geometry(sphere2.get_vertices(), colours2, sphere2.get_n_vertices());
-        glDrawArrays(GL_TRIANGLES, 0, sphere2.get_n_vertices());
+        sphere1.get_n_normal_lines();
+        setup_geometry(sphere1.get_normal_lines(), line_colours, sphere1.get_n_normal_lines());
+        glDrawArrays(GL_LINES, 0, sphere1.get_n_normal_lines());
+//
+//        update_MVP(model2, view, projection);
+//        setup_geometry(sphere2.get_vertices(), colours2, sphere2.get_n_vertices());
+//        glDrawArrays(GL_TRIANGLES, 0, sphere2.get_n_vertices());
 
         glfwSwapBuffers(mainWindow);
 

@@ -86,6 +86,7 @@ class Isosphere
 
                 void subdivide(Triangle&, Triangle&, Triangle&, Triangle&);
                 void get_normal(Point&);
+                void get_normal_line(Point& pt1, Point& pt2, GLfloat length);
             private:
                 Point out_of_bounds;
         };
@@ -96,12 +97,15 @@ class Isosphere
         GLfloat* get_vertices();
         const unsigned int get_n_vertices();
         GLfloat* get_normals();
+        GLfloat* get_normal_lines(GLfloat length = 0.25);
+        const unsigned int get_n_normal_lines();
         void subdivide();
     private:
 
         std::vector<Triangle> faces;
         std::vector<Triangle> subfaces;
         std::vector<Triangle::Point> normals;
+        std::vector<GLfloat> normal_lines;
         std::vector<GLfloat> vertices;
         void generate_icosahedron();
 

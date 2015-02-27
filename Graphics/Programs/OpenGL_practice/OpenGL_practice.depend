@@ -495,10 +495,10 @@
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtx/transform.hpp>
 
-1423582544 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\isosphere.cpp
+1425055321 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\isosphere.cpp
 	"isosphere.h"
 
-1423536447 d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\isosphere.h
+1425054366 d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\isosphere.h
 	<vector>
 	<cstdlib>
 	<iostream>
@@ -876,7 +876,7 @@
 
 1387952394 d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\graphics\include\glm\gtx\transform.inl
 
-1424273253 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\main.cpp
+1425055331 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\main.cpp
 	<vector>
 	<cstdlib>
 	<iostream>
@@ -888,6 +888,7 @@
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtx/transform.hpp>
+	<stb_image.h>
 	"isosphere.h"
 	"model.h"
 
@@ -906,4 +907,16 @@
 
 1424120727 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\model.cpp
 	"model.h"
+
+1413820634 d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\graphics\include\stb_image.h
+	<stdio.h>
+	<math.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<assert.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdint.h>
 
