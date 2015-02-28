@@ -1,8 +1,9 @@
 #version 330 core
-flat in vec3 fragmentColour;
 in vec3 normal;
 in vec3 lightPos;
 in vec3 camPos;
+in vec2 UV;
+uniform sampler2D textureSampler;
 uniform vec3 Ka;
 uniform vec3 Kd;
 uniform vec3 Ks;
@@ -33,7 +34,7 @@ float ambient(float ka)
 
 float diffuse(float kd)
 {
-    float light = kd * (dot(lightPos, normal) / (length(lightPos) * length(normal))); //Cos(theta) theta = angle between light source & normal
+    float light = kd * clamp(dot(lightPos, normal) / (length(lightPos) * length(normal)), 0 ,1); //Cos(theta) theta = angle between light source & normal
     return light;
 }
 
@@ -41,7 +42,7 @@ float specular(float ks)
 {
 
     vec3 reflectDir = rotate(lightPos, 180, normal);
-    float cosPhi = dot(reflectDir, camPos) / (length(reflectDir) * length(camPos));
+    float cosPhi = clamp(dot(reflectDir, camPos) / (length(reflectDir) * length(camPos)), 0 ,1) ;
     float light = ks;
     for(int i=0; i<Sn; i++)
     {
@@ -51,14 +52,12 @@ float specular(float ks)
     return light;
 }
 
-
-
 void main(void)
 {
+    vec3 textureColour = texture(textureSampler, UV).rgb;
     vec3 temp;
-    temp.x = fragmentColour.x * lightCol.x * (ambient(Ka.x) + diffuse(Kd.x) + specular(Ks.x)); //red
-    temp.y = fragmentColour.y * lightCol.y * (ambient(Ka.y) + diffuse(Kd.y) + specular(Ks.y)); //green
-    temp.z = fragmentColour.z * lightCol.z * (ambient(Ka.z) + diffuse(Kd.z) + specular(Ks.z)); //blue
+    temp.x = textureColour.x * lightCol.x * (ambient(Ka.x) + diffuse(Kd.x) + specular(Ks.x)); //red
+    temp.y = textureColour.y * lightCol.y * (ambient(Ka.y) + diffuse(Kd.y) + specular(Ks.y)); //green
+    temp.z = textureColour.z * lightCol.z * (ambient(Ka.z) + diffuse(Kd.z) + specular(Ks.z)); //blue
     colour =  temp;
 }
-

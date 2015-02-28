@@ -11,11 +11,16 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
-#include <stb_image.h>
 #include "isosphere.h"
 #include "model.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 #define PI 3.141592654
+
+typedef enum modeType{A, B, C, D, E}modeType;
+modeType MODE = A;
 
 /*const GLfloat cube[] =
     {
@@ -102,7 +107,6 @@ GLuint shaderProgramID;
 glm::vec3 camPos(0,0,5);
 glm::vec3 upDir(0,1,0);
 
-
 void setup_geometry(const GLfloat* vertex_buffer_data, const GLfloat* colour_buffer_data, const unsigned int n_vertices)
 {
     if(!vertexBuffer)
@@ -117,11 +121,14 @@ void setup_geometry(const GLfloat* vertex_buffer_data, const GLfloat* colour_buf
 
     glBindBuffer(GL_ARRAY_BUFFER, colourBuffer);
     glEnableVertexAttribArray(1);
+//    glBufferData(GL_ARRAY_BUFFER, n_vertices * sizeof(GLfloat), colour_buffer_data, GL_STATIC_DRAW);
+//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
     glBufferData(GL_ARRAY_BUFFER, n_vertices * sizeof(GLfloat), colour_buffer_data, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
     glBindAttribLocation(shaderProgramID, 0, "vertexPos_modelspace");
-    glBindAttribLocation(shaderProgramID, 1, "vertexColour");
+//    glBindAttribLocation(shaderProgramID, 1, "vertexColour");
+    glBindAttribLocation(shaderProgramID, 1, "vertexUV");
 }
 
 void load_shaders(const char* vertex_src_path, const char* fragment_src_path)
@@ -266,7 +273,7 @@ void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat
     update_MVP(model, view, projection);
 }
 
-/*GLuint load_texture(const char* img_path, int* w, int* h, int* bit_depth)
+GLuint load_texture(const char* img_path, int* w, int* h, int* bit_depth)
 {
     unsigned char* img_data = stbi_load(img_path, w, h, bit_depth, STBI_rgb_alpha);
     GLuint textureID;
@@ -281,7 +288,7 @@ void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat
     glGenerateMipmap(GL_TEXTURE_2D);
 
     return textureID;
-}*/
+}
 
 
 int main(int argc, char **argv)
@@ -321,7 +328,6 @@ int main(int argc, char **argv)
         UVs[i][1] = 0.5 + asin(sphere1Verts[i+1])/PI;
     }
 
-
     //Initialise GLFW
     if(!glfwInit())
     {
@@ -356,19 +362,19 @@ int main(int argc, char **argv)
     glGenVertexArrays(2, &vertexArrayID);
     glBindVertexArray(vertexArrayID);
 
-    load_shaders("shader.vert", "shader.frag");
+    load_shaders("shaders/lighting.vert", "shaders/lighting.frag");
     glUseProgram(shaderProgramID);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
     ///texture from http://podet.imcce.fr/podet_exp/app_dev.php/images/3229f30_Color%20Map.smaller_1.jpg
-    const char* globe_tex_path = "textures/globe.bmp";
+    const char* globe_tex_path = "textures/globe.jpg";
     int w = 4096;
     int h = 2048;
     int bit_depth = 24;
 
-    //GLuint textureID = load_texture(globe_tex_path, &w, &h, &bit_depth);
+    GLuint textureID = load_texture(globe_tex_path, &w, &h, &bit_depth);
 
     int angle = 0;
 
@@ -404,27 +410,42 @@ int main(int argc, char **argv)
     const GLuint camPos_ID = glGetUniformLocation(shaderProgramID, "camPos_modelspace");
     glUniform3fv(camPos_ID, 1, &lightCol[0]);
 
+
+
     do
     {
         glfwPollEvents();
+        switch(MODE)
+        {
+            case A: //Draw a wire-frame sphere
+            break;
+            case B: //Augment wire-frame sphere with normal lines
+            break;
+            case C: //Add shading (light source at infinity)
+            break;
+            case D: //Develop a simple animation showing a number of cones and spheres moving along regular paths
+            break;
+            case E: //Draw a textured object, such as a rectangle (plane), box or sphere
+            break;
 
-        angle = (angle + 1) % 360;
-        model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
-        model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
+        }
+//        angle = (angle + 1) % 360;
+//        model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
+//        model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         update_MVP(model1, view, projection);
-        setup_geometry(sphere1.get_vertices(), colours1, sphere1.get_n_vertices());
+        setup_geometry(sphere1.get_vertices(), &UVs[0][0], sphere1.get_n_vertices());
         glDrawArrays(GL_TRIANGLES, 0, sphere1.get_n_vertices());
 
-        sphere1.get_n_normal_lines();
-        setup_geometry(sphere1.get_normal_lines(), line_colours, sphere1.get_n_normal_lines());
-        glDrawArrays(GL_LINES, 0, sphere1.get_n_normal_lines());
-
-        update_MVP(model2, view, projection);
-        setup_geometry(sphere2.get_vertices(), colours2, sphere2.get_n_vertices());
-        glDrawArrays(GL_TRIANGLES, 0, sphere2.get_n_vertices());
+//        sphere1.get_n_normal_lines();
+//        setup_geometry(sphere1.get_normal_lines(), line_colours, sphere1.get_n_normal_lines());
+//        glDrawArrays(GL_LINES, 0, sphere1.get_n_normal_lines());
+//
+//        update_MVP(model2, view, projection);
+//        setup_geometry(sphere2.get_vertices(), colours2, sphere2.get_n_vertices());
+//        glDrawArrays(GL_TRIANGLES, 0, sphere2.get_n_vertices());
 
         glfwSwapBuffers(mainWindow);
 

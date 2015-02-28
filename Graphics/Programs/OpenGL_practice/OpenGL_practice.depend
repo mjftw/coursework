@@ -876,7 +876,7 @@
 
 1387952394 d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\graphics\include\glm\gtx\transform.inl
 
-1425086197 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\main.cpp
+1425091245 source:d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\main.cpp
 	<vector>
 	<cstdlib>
 	<iostream>
@@ -888,9 +888,9 @@
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtx/transform.hpp>
-	<stb_image.h>
 	"isosphere.h"
 	"model.h"
+	"stb_image.h"
 
 1424120354 d:\libaries\uni work\year 3\coursework\graphics\programs\opengl_practice\model.h
 	<vector>
