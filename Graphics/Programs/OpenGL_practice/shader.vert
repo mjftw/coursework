@@ -1,12 +1,21 @@
 #version 330 core
-layout(location = 0) in vec3 vertexPos_modelspace;
-layout(location = 1) in vec3 vertexColour;
-uniform mat4 MVP;
-out vec3 fragmentColour;
+in vec3 vertexPos_modelspace;
+in vec3 vertexColour;
+uniform mat4 M;
+uniform mat4 V;
+uniform mat4 P;
+uniform vec3 lightPos_modelspace;
+uniform vec3 camPos_modelspace;
+flat out vec3 fragmentColour;
+out vec3 normal;
+out vec3 lightPos;
+out vec3 camPos;
 
 void main(void)
 {
-    vec4 v = vec4(vertexPos_modelspace, 1);
-    gl_Position = MVP * v;
+    gl_Position = P * V * M * vec4(vertexPos_modelspace, 1);
     fragmentColour = vertexColour;
+    normal = normalize(vertexPos_modelspace);
+    lightPos = (vec4(lightPos_modelspace, 1) * M).xyz;
+    camPos = (vec4(camPos_modelspace, 1) * M).xyz;
 }

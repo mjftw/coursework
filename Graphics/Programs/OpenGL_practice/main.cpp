@@ -99,9 +99,9 @@ GLuint vertexBuffer = 0;
 GLuint colourBuffer = 0;
 GLuint shaderProgramID;
 
-void render(int n_vertices)
-{
-}
+glm::vec3 camPos(0,0,5);
+glm::vec3 upDir(0,1,0);
+
 
 void setup_geometry(const GLfloat* vertex_buffer_data, const GLfloat* colour_buffer_data, const unsigned int n_vertices)
 {
@@ -119,6 +119,9 @@ void setup_geometry(const GLfloat* vertex_buffer_data, const GLfloat* colour_buf
     glEnableVertexAttribArray(1);
     glBufferData(GL_ARRAY_BUFFER, n_vertices * sizeof(GLfloat), colour_buffer_data, GL_STATIC_DRAW);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+    glBindAttribLocation(shaderProgramID, 0, "vertexPos_modelspace");
+    glBindAttribLocation(shaderProgramID, 1, "vertexColour");
 }
 
 void load_shaders(const char* vertex_src_path, const char* fragment_src_path)
@@ -210,12 +213,14 @@ void load_shaders(const char* vertex_src_path, const char* fragment_src_path)
 
 void update_MVP(glm::mat4 model, glm::mat4 view, glm::mat4 projection)
 {
-    glm::mat4 MVP = projection * view * model;
-
-    const GLuint MVP_ID = glGetUniformLocation(shaderProgramID, "MVP");
-    glUniformMatrix4fv(MVP_ID, 1, GL_FALSE, &MVP[0][0]);
+    const GLuint M_ID = glGetUniformLocation(shaderProgramID, "M");
+    glUniformMatrix4fv(M_ID, 1, GL_FALSE, &model[0][0]);
+    const GLuint V_ID = glGetUniformLocation(shaderProgramID, "V");
+    glUniformMatrix4fv(V_ID, 1, GL_FALSE, &view[0][0]);
+    const GLuint P_ID = glGetUniformLocation(shaderProgramID, "P");
+    glUniformMatrix4fv(P_ID, 1, GL_FALSE, &projection[0][0]);
 }
-void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat4& projection, glm::vec3& camPos)
+void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat4& projection)
 {
     glfwPollEvents();
 
@@ -240,13 +245,13 @@ void check_input(GLFWwindow* window, glm::mat4& model, glm::mat4& view ,glm::mat
     if(glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
     {
         camPos.z += 0.05;// = glm::vec3(camPos.x, camPos.y, camPos.z + 0.05);
-        view = glm::lookAt(camPos, glm::vec3(0,0,0), glm::vec3(0,1,0));
+        view = glm::lookAt(camPos, glm::vec3(0.001,0,0), glm::vec3(0,1,0));
     }
 
     if(glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
     {
         camPos.z -= 0.05;// glm::vec3(camPos.x, camPos.y, camPos.z - 0.05);
-        view = glm::lookAt(camPos, glm::vec3(0,0,0), glm::vec3(0,1,0));
+        view = glm::lookAt(camPos, glm::vec3(0.001,0,0), glm::vec3(0,1,0));
     }
 
     if(glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
@@ -286,7 +291,7 @@ int main(int argc, char **argv)
 
     GLfloat* sphere1Verts = sphere1.get_vertices();
 
-    std::cout << "Number of faces:" << sphere2.get_n_vertices() /9 << std::endl;
+    std::cout << "Number of faces:" << sphere1.get_n_vertices() /9 << std::endl;
 
     GLfloat colours1[sphere1.get_n_vertices()];
     for(int i=0; i<sphere1.get_n_vertices(); i++)
@@ -329,7 +334,7 @@ int main(int argc, char **argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* mainWindow = glfwCreateWindow(1024, 720, "Icosphere", NULL, NULL);
+    GLFWwindow* mainWindow = glfwCreateWindow(1280, 720, "Icosphere", NULL, NULL);
 
     //Check mainWindow
     if(mainWindow == NULL)
@@ -365,21 +370,47 @@ int main(int argc, char **argv)
 
     //GLuint textureID = load_texture(globe_tex_path, &w, &h, &bit_depth);
 
-    glm::vec3 camPos(0,0,5);
     int angle = 0;
 
     glm::mat4 projection = glm::perspective(45.0f, 16.0f/9.0f, 0.1f, 100.0f);
-    glm::mat4 view = glm::lookAt(camPos, glm::vec3(0,0,0), glm::vec3(0,1,0));
+    glm::mat4 view = glm::lookAt(camPos, glm::vec3(0,0,0), upDir);
     glm::mat4 model1 = glm::mat4(1.0);
     glm::mat4 model2 = glm::mat4(1.0);
+
+    glm::vec3 Ka(0.1, 0.1, 0.1); //rgb
+    const GLuint Ka_ID = glGetUniformLocation(shaderProgramID, "Ka");
+    glUniform3fv(Ka_ID, 1, &Ka[0]);
+
+    glm::vec3 Kd(0.6, 0.6, 0.6); //rgb
+    const GLuint Kd_ID = glGetUniformLocation(shaderProgramID, "Kd");
+    glUniform3fv(Kd_ID, 1, &Kd[0]);
+
+    glm::vec3 Ks(0.9, 0.9, 0.9); //rgb
+    const GLuint Ks_ID = glGetUniformLocation(shaderProgramID, "Ks");
+    glUniform3fv(Ks_ID, 1, &Ks[0]);
+
+    const int Sn = 10; //specularity
+    const GLuint Sn_ID = glGetUniformLocation(shaderProgramID, "Sn");
+    glUniform1i(Sn_ID, Sn);
+
+    glm::vec3 lightPos(0.5, 0.5, 2); //xyz
+    const GLuint lightPos_ID = glGetUniformLocation(shaderProgramID, "lightPos_modelspace");
+    glUniform3fv(lightPos_ID, 1, &lightPos[0]);
+
+    glm::vec3 lightCol(1, 1, 1); //rgb
+    const GLuint lightCol_ID = glGetUniformLocation(shaderProgramID, "lightCol");
+    glUniform3fv(lightCol_ID, 1, &lightCol[0]);
+
+    const GLuint camPos_ID = glGetUniformLocation(shaderProgramID, "camPos_modelspace");
+    glUniform3fv(camPos_ID, 1, &lightCol[0]);
 
     do
     {
         glfwPollEvents();
 
-//        angle = (angle + 1) % 360;
-//        model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
-//        model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
+        angle = (angle + 1) % 360;
+        model1 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(2,0,0));
+        model2 = glm::rotate((float)angle, glm::vec3(0,1,0)) * glm::translate(glm::vec3(-2,0,0));
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -390,14 +421,14 @@ int main(int argc, char **argv)
         sphere1.get_n_normal_lines();
         setup_geometry(sphere1.get_normal_lines(), line_colours, sphere1.get_n_normal_lines());
         glDrawArrays(GL_LINES, 0, sphere1.get_n_normal_lines());
-//
-//        update_MVP(model2, view, projection);
-//        setup_geometry(sphere2.get_vertices(), colours2, sphere2.get_n_vertices());
-//        glDrawArrays(GL_TRIANGLES, 0, sphere2.get_n_vertices());
+
+        update_MVP(model2, view, projection);
+        setup_geometry(sphere2.get_vertices(), colours2, sphere2.get_n_vertices());
+        glDrawArrays(GL_TRIANGLES, 0, sphere2.get_n_vertices());
 
         glfwSwapBuffers(mainWindow);
 
-        check_input(mainWindow, model1, view, projection, camPos);
+        check_input(mainWindow, model1, view, projection);
 
         glFlush();
     }while(!glfwWindowShouldClose(mainWindow));
